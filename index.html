@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engineer Task Dashboard | Link3</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--primary:#059669;--primary-light:#10b981;--bg-s:#f0fdf4;--bg-e:#ecfdf5;--card:#ffffff;--text:#1f2937;--border:#d1fae5;--shadow:0 6px 15px rgba(5,150,105,.08);--cb:18px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--bg-s),var(--bg-e));color:var(--text);padding:16px;min-height:100vh;background-attachment:fixed;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 10% 20%,rgba(16,185,129,.05) 0%,transparent 20%),radial-gradient(circle at 90% 80%,rgba(16,185,129,.05) 0%,transparent 20%);z-index:-1}
+.container{max-width:900px;margin:0 auto}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0ea5e9,#10b981);padding:14px 24px;border-radius:16px;color:#fff;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;box-shadow:0 8px 20px rgba(14,165,233,.25);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+header::before{content:'';position:absolute;top:-40%;right:-15%;width:120px;height:120px;background:rgba(14,165,233,.2);border-radius:50%;filter:blur(8px)}
+header::after{content:'';position:absolute;bottom:-30%;left:-8%;width:100px;height:100px;background:rgba(16,185,129,.2);border-radius:50%;filter:blur(6px)}
+.header-left{display:flex;align-items:center;gap:20px;position:relative;z-index:1}
+.company-logo img{width:80px;height:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.header-title-container{display:flex;flex-direction:column}
+.header-left h1{font-family:'Montserrat',sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;letter-spacing:.7px;text-shadow:0 2px 4px rgba(0,0,0,.2);margin-bottom:3px;color:#fff}
+.company-name{font-family:'Montserrat',sans-serif;font-size:1.25rem;font-weight:700;color:#003399;text-shadow:0 1px 3px rgba(0,0,0,.3)}
+.header-right{text-align:right;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.datetime-container{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+#headerDate{font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.95);text-transform:uppercase}
+#headerTime{font-family:'Outfit',monospace;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:6px;color:#00008b;border:1px solid rgba(255,255,255,.25);min-width:90px;text-align:center}
+.today-count{background:linear-gradient(135deg,#3b82f6,#1e40af);padding:4px 10px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.75rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:5px;border:1px solid #1e90ff}
+.today-count-number{padding:1px 6px;border-radius:10px;font-size:.8rem;font-weight:800;min-width:24px;text-align:center}
+
+/* CARD */
+.card{background:var(--card);border-radius:16px;padding:20px;border:1px solid rgba(209,250,229,.8);box-shadow:var(--shadow);margin-bottom:20px;transition:all .3s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,#059669,#10b981,#34d399)}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(5,150,105,.15)}
+.row{display:grid;gap:16px;margin-bottom:14px}
+.row-3{grid-template-columns:repeat(3,1fr)}
+.row-1{grid-template-columns:1fr}
+.input-group{display:flex;flex-direction:column;gap:5px}
+
+label{font-family:'Montserrat',sans-serif;font-size:.70rem;font-weight:700;color:#00A36C;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:6px}
+label i{font-size:.95rem;min-width:20px;text-align:center}
+.fa-calendar-alt{color:#059669}.fa-ticket-alt{color:#3b82f6}.fa-tasks{color:#8b5cf6}.fa-toolbox{color:#10b981}.fa-users{color:#f59e0b}.fa-user-cog{color:#0ea5e9}.fa-headset{color:#8b5cf6}.fa-network-wired{color:#ef4444}.fa-wifi{color:#6366f1}.fa-comment-dots{color:#f97316}
+
+input,select{padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:'Outfit',sans-serif;font-weight:500;outline:none;transition:all .3s;background:rgba(255,255,255,.9);height:42px}
+#engineerName option{background-color:#ECFEFF!important;font-weight:500!important}
+#engineerName option:checked{background:#8b5cf6;color:#fff!important;font-weight:600!important}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23059669' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:35px}
+select:hover{border-color:var(--primary);background-color:#f0fdf4}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(5,150,105,.1);background:#fff;transform:translateY(-1px)}
+
+/* REMARKS TEXTAREA */
+.remarks-box{
+  width:100%;
+  height:42px;
+  min-height:42px;
+  max-height:42px;
+  padding:10px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-size:.85rem;
+  font-family:'Outfit',sans-serif;
+  font-weight:500;
+  outline:none;
+  transition:all .3s;
+  background:rgba(255,255,255,.9);
+  resize:none;
+  line-height:1.4;
+  color:var(--text);
+  overflow:hidden;
+}
+.remarks-box::placeholder{color:#9ca3af;font-style:italic}
+.remarks-box:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.1);background:#fff;transform:translateY(-1px)}
+.remarks-wrapper{position:relative}
+.remarks-count{position:absolute;bottom:8px;right:12px;font-size:.65rem;font-family:'Montserrat',sans-serif;color:#9ca3af;pointer-events:none}
+
+/* CHECKBOX DROPDOWN */
+.checkbox-dropdown{position:relative;cursor:pointer}
+.checkbox-dropdown-select{height:42px;width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:'Outfit',sans-serif;font-weight:500;background:rgba(255,255,255,.9);cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:var(--text);transition:all .3s}
+.checkbox-dropdown-select::after{content:'▼';font-size:.7rem;color:var(--primary);transition:transform .3s}
+.checkbox-dropdown.active .checkbox-dropdown-select::after{transform:rotate(180deg)}
+.checkbox-dropdown-select:hover{border-color:var(--primary);background:#fff}
+.checkbox-dropdown-options{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#ECFEFF;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 8px 20px rgba(5,150,105,.15);z-index:100;max-height:0;overflow:hidden;transition:max-height .4s ease-out;opacity:0;visibility:hidden}
+.checkbox-dropdown.active .checkbox-dropdown-options{max-height:300px;opacity:1;visibility:visible;overflow-y:auto}
+.checkbox-option{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;border-bottom:1px solid rgba(209,250,229,.5)}
+.checkbox-option:last-child{border-bottom:none}
+.checkbox-option:hover{background-color:#f0fdf4}
+.checkbox-option.selected{background-color:#e6f2ff}
+.checkbox-custom{width:var(--cb);height:var(--cb);border:2px solid #059669;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.checkbox-custom::after{content:'';width:10px;height:10px;background:linear-gradient(135deg,#0ea5e9,#10b981);border-radius:2px;opacity:0;transform:scale(0);transition:all .2s}
+.checkbox-option.selected .checkbox-custom::after{opacity:1;transform:scale(1)}
+.checkbox-label{font-size:.85rem;color:var(--text);font-weight:500;flex-grow:1}
+.checkbox-option.selected .checkbox-label{font-weight:600;color:#059669}
+.checkbox-dropdown-value{font-size:.85rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1}
+.checkbox-placeholder{color:#9ca3af;font-style:italic}
+
+/* TOGGLE */
+.toggle-btn{width:100%;height:42px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;background:#fff;color:#6b7280;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .3s}
+.toggle-btn .status-text{flex:1;text-align:center}
+.toggle-btn .toggle-icon{font-size:.8rem;transition:transform .3s}
+.toggle-btn:hover{border-color:#34d399;transform:translateY(-1px)}
+.toggle-btn.active{border-color:transparent;background:linear-gradient(135deg,#0ea5e9,#10b981);color:#fff;box-shadow:0 6px 15px rgba(14,165,233,.3)}
+.toggle-btn.active .toggle-icon{color:#fff}
+
+/* SUBMIT BTN */
+.btn-done{width:100%;background:linear-gradient(135deg,#0ea5e9,#10b981);color:#fff;border:none;border-radius:12px;font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .3s;box-shadow:0 6px 15px rgba(14,165,233,.25);letter-spacing:.7px;position:relative;overflow:hidden;margin-top:14px;height:46px;display:flex;align-items:center;justify-content:center;gap:8px;text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.btn-done i{font-size:1.1rem;color:#fff}
+.btn-done::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transition:left .7s}
+.btn-done:hover::before{left:100%}
+.btn-done:hover{transform:translateY(-3px);filter:brightness(1.1);box-shadow:0 10px 20px rgba(14,165,233,.35)}
+.btn-done:disabled{background:#cbd5e0;cursor:not-allowed;transform:none;box-shadow:none}
+.task-footer{margin-top:8px;padding:0 4px}
+.author-name{font-weight:500;color:#2563eb;font-size:.60rem;font-family:'Montserrat',sans-serif}
+
+/* TABLE */
+.table-section{background:var(--card);border-radius:16px;border:1px solid rgba(209,250,229,.8);overflow:hidden;box-shadow:var(--shadow);transition:transform .3s;margin-top:8px}
+.table-section:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(5,150,105,.12)}
+.table-header{padding:14px 18px;background:linear-gradient(90deg,#e6f7f0,#d1f2e5);font-family:'Montserrat',sans-serif;font-weight:900;color:#059669;border-bottom:2px solid #10b981;text-transform:uppercase;letter-spacing:.7px;font-size:.8rem;display:flex;justify-content:space-between;align-items:center}
+.table-title{display:flex;align-items:center;gap:8px}
+.table-title i{color:#0ea5e9;font-size:1.1rem}
+.table-filters{display:flex;align-items:center;gap:10px;margin-left:auto;margin-right:10px}
+.date-filter{display:flex;align-items:center;gap:6px}
+.date-filter-label{font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:800;color:#047857;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.date-filter-input{padding:5px 8px;border:1.5px solid #34d399;border-radius:6px;font-family:'Outfit',sans-serif;font-size:.7rem;background:#fff;color:var(--text);width:110px;height:30px}
+.date-filter-input:focus{border-color:#10b981;outline:none}
+.filter-btn{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:5px 10px;border-radius:6px;font-family:'Montserrat',sans-serif;font-size:.65rem;font-weight:600;cursor:pointer;transition:all .3s;height:30px;display:flex;align-items:center;gap:4px}
+.filter-btn:hover{transform:translateY(-1px)}
+.clear-btn{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;padding:6px 14px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .3s;box-shadow:0 4px 10px rgba(220,38,38,.2);display:flex;align-items:center;gap:5px;height:32px;position:relative;overflow:hidden}
+.clear-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .7s}
+.clear-btn:hover::before{left:100%}
+.clear-btn:hover{transform:translateY(-2px);box-shadow:0 6px 15px rgba(220,38,38,.3)}
+.clear-btn:disabled{background:#cbd5e0;cursor:not-allowed;transform:none;box-shadow:none}
+
+.table-wrapper{overflow-x:auto;max-height:420px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th{padding:10px 14px;text-align:left;font-family:'Montserrat',sans-serif;font-size:.65rem;background:#eff6ff;color:#1e40af;border-bottom:2px solid #93c5fd;letter-spacing:.5px;font-weight:800;position:sticky;top:0;z-index:10;white-space:nowrap}
+td{padding:10px 14px;font-size:.78rem;font-family:'Outfit',sans-serif;font-weight:500;color:#111827;white-space:nowrap;vertical-align:middle}
+td.onu-mac{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#111827}
+tbody tr:nth-child(even){background-color:#f8fafc}
+tbody tr:nth-child(odd){background-color:#fff}
+tbody tr:hover{background-color:#e0f2fe}
+tbody tr{border-bottom:1px solid #e5e7eb;transition:background .2s}
+tbody tr:last-child{border-bottom:none}
+.badge{background:linear-gradient(90deg,#dbeafe,#bfdbfe);color:#1e40af;padding:3px 8px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:.6rem;font-weight:800;display:inline-block;text-transform:uppercase;border:1px solid rgba(30,64,175,.1)}
+
+/* TICKET ID WITH DELETE ICON */
+.ticket-cell{display:flex;align-items:center;gap:6px;font-weight:700;font-family:'Montserrat',sans-serif;}
+.btn-delete-inline{background:none;border:none;cursor:pointer;color:#ef4444;font-size:.75rem;padding:3px 4px;border-radius:5px;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.7;}
+.btn-delete-inline:hover{background:rgba(239,68,68,.12);color:#b91c1c;opacity:1;transform:scale(1.2);}
+.btn-delete-inline:disabled{color:#d1d5db;cursor:not-allowed;transform:none;}
+
+@keyframes rowSlideOut{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(60px)}}
+.row-deleting{animation:rowSlideOut .38s ease-out forwards}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .25s}
+.modal-overlay.show{opacity:1;visibility:visible}
+.modal-box{background:#fff;border-radius:18px;padding:30px 28px 24px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:scale(.85) translateY(20px);transition:all .3s cubic-bezier(.175,.885,.32,1.275);border-top:5px solid #ef4444}
+.modal-overlay.show .modal-box{transform:scale(1) translateY(0)}
+.modal-icon{width:56px;height:56px;background:linear-gradient(135deg,#fee2e2,#fecaca);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem}
+.modal-title{font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:800;color:#1f2937;text-align:center;margin-bottom:8px;text-transform:uppercase}
+.modal-subtitle{font-family:'Outfit',sans-serif;font-size:.82rem;color:#6b7280;text-align:center;margin-bottom:6px;line-height:1.5}
+.modal-ticket-id{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:#059669;background:#f0fdf4;border:1.5px solid #d1fae5;border-radius:8px;padding:6px 12px;text-align:center;margin:10px 0 18px;display:block;word-break:break-all}
+.modal-warning{font-family:'Outfit',sans-serif;font-size:.75rem;color:#dc2626;text-align:center;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:5px}
+.modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modal-btn-cancel{background:#f3f4f6;color:#374151;border:1.5px solid #e5e7eb;padding:10px;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.modal-btn-cancel:hover{background:#e5e7eb;transform:translateY(-1px)}
+.modal-btn-confirm{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;border:none;padding:10px;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all .2s;box-shadow:0 4px 12px rgba(220,38,38,.35);display:flex;align-items:center;justify-content:center;gap:6px}
+.modal-btn-confirm i{color:#fff}
+.modal-btn-confirm:hover{transform:translateY(-1px);filter:brightness(1.1)}
+.modal-btn-confirm:disabled{background:#d1d5db;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* TOAST */
+.toast{position:fixed;top:50%;right:20px;background:linear-gradient(135deg,rgba(14,165,233,.92),rgba(59,130,246,.92));color:#fff;padding:14px 22px;border-radius:14px;box-shadow:0 10px 30px rgba(14,165,233,.4);font-family:'Montserrat',sans-serif;font-weight:600;z-index:10000;display:flex;align-items:center;gap:12px;transform:translateX(150%);transition:transform .5s cubic-bezier(.175,.885,.32,1.275);border:1px solid rgba(255,255,255,.3);min-width:280px;max-width:350px;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(0) translateY(-50%);opacity:1;pointer-events:all}
+.toast-icon{font-size:1.3rem;background:rgba(255,255,255,.2);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#toastMessage{font-size:.8rem;font-weight:600;line-height:1.4;flex:1}
+
+@media(max-width:768px){
+  body{padding:10px}
+  .row-3{grid-template-columns:1fr}
+  header{flex-direction:column;text-align:center;padding:14px 10px;gap:15px}
+  .header-left{flex-direction:column;align-items:center;gap:12px}
+  .header-left h1{font-size:1.1rem}
+  .company-logo img{width:150px}
+  .header-left,.header-right{text-align:center;width:100%;align-items:center}
+  .datetime-container{align-items:center}
+  .table-header{flex-direction:column;gap:8px;align-items:flex-start}
+  .table-filters{width:100%;margin:6px 0}
+  .date-filter{width:100%;justify-content:space-between}
+  .card{padding:16px}
+  th,td{padding:8px 10px;font-size:.68rem}
+  input,select{height:40px}
+  .toast{right:10px;left:10px;max-width:calc(100% - 20px);min-width:auto}
+  .toast.show{transform:translateY(-50%) translateX(0)}
+  .checkbox-dropdown-options{position:fixed;top:50%;left:10px;right:10px;transform:translateY(-50%);max-height:70vh;z-index:1000}
+  .checkbox-dropdown.active .checkbox-dropdown-options{max-height:70vh}
+  .modal-box{padding:24px 18px 20px}
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card,.table-section{animation:fadeIn .5s ease-out}
+</style>
+</head>
+<body>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">Delete Ticket?</div>
+    <div class="modal-subtitle">আপনি কি নিশ্চিতভাবে এই Ticket টি Delete করতে চান?</div>
+    <span class="modal-ticket-id" id="modalTicketID">—</span>
+    <div class="modal-warning"><i class="fas fa-exclamation-triangle"></i> Google Sheet থেকেও permanently মুছে যাবে!</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="closeDeleteModal()"><i class="fas fa-times"></i> Cancel</button>
+      <button class="modal-btn-confirm" id="modalConfirmBtn" onclick="confirmDelete()"><i class="fas fa-trash-alt"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <header>
+    <div class="header-left">
+      <div class="company-logo">
+        <img src="https://z-cdn-media.chatglm.cn/files/ec97a2bb-1f62-4aa3-b8dd-d7c5349ef71e.png?auth_key=1870751333-bce0d43ce17a472f82b7ca62e6852b21-0-33f4b6311a64ec23a2a122fb5366adb1" alt="Link3 Logo">
+      </div>
+      <div class="header-title-container">
+        <h1>Daily Work Dashboard</h1>
+        <div class="company-name">Motijheel Zone</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="datetime-container">
+        <span id="headerDate"></span>
+        <span id="headerTime"></span>
+      </div>
+      <div class="today-count">
+        <span>Today's Task:</span>
+        <span class="today-count-number" id="todayTaskCount">0</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+
+    <!-- Row 1: Work Date | Ticket ID | Task Category -->
+    <div class="row row-3">
+      <div class="input-group">
+        <label><i class="fas fa-calendar-alt"></i> Work Date</label>
+        <input type="date" id="taskDate">
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-ticket-alt"></i> Ticket ID</label>
+        <input type="text" id="ticketID" placeholder="e.g. L3-31Jan26-1234, L3-31Jan26-5678">
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-tasks"></i> Task Category</label>
+        <div class="checkbox-dropdown" id="taskCategoryDropdown">
+          <div class="checkbox-dropdown-select"><span class="checkbox-dropdown-value checkbox-placeholder">Select Category</span></div>
+          <div class="checkbox-dropdown-options">
+            <div class="checkbox-option" data-value="Installation"><div class="checkbox-custom"></div><span class="checkbox-label">Installation</span></div>
+            <div class="checkbox-option" data-value="Troubleshoot"><div class="checkbox-custom"></div><span class="checkbox-label">Troubleshoot</span></div>
+            <div class="checkbox-option" data-value="Survey"><div class="checkbox-custom"></div><span class="checkbox-label">Survey</span></div>
+            <div class="checkbox-option" data-value="CR"><div class="checkbox-custom"></div><span class="checkbox-label">CR</span></div>
+            <div class="checkbox-option" data-value="Non Ticket"><div class="checkbox-custom"></div><span class="checkbox-label">Non Ticket</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Task Type | Team Type | Engineer Name -->
+    <div class="row row-3">
+      <div class="input-group">
+        <label><i class="fas fa-toolbox"></i> Task Type</label>
+        <div class="checkbox-dropdown" id="taskTypeDropdown">
+          <div class="checkbox-dropdown-select"><span class="checkbox-dropdown-value checkbox-placeholder">Select Task Type</span></div>
+          <div class="checkbox-dropdown-options">
+            <div class="checkbox-option" data-value="Phone support"><div class="checkbox-custom"></div><span class="checkbox-label">Phone support</span></div>
+            <div class="checkbox-option" data-value="Physical support"><div class="checkbox-custom"></div><span class="checkbox-label">Physical support</span></div>
+            <div class="checkbox-option" data-value="Back office support for Tech"><div class="checkbox-custom"></div><span class="checkbox-label">Back office support for Tech</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-users"></i> Team Type</label>
+        <div class="checkbox-dropdown" id="teamTypeDropdown">
+          <div class="checkbox-dropdown-select"><span class="checkbox-dropdown-value checkbox-placeholder">Select Team Type</span></div>
+          <div class="checkbox-dropdown-options">
+            <div class="checkbox-option" data-value="Engineer"><div class="checkbox-custom"></div><span class="checkbox-label">Engineer</span></div>
+            <div class="checkbox-option" data-value="Single Tech & Engineer"><div class="checkbox-custom"></div><span class="checkbox-label">Single Tech & Engineer</span></div>
+            <div class="checkbox-option" data-value="FI Team"><div class="checkbox-custom"></div><span class="checkbox-label">FI Team</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-user-cog"></i> Engineer Name</label>
+        <select id="engineerName">
+          <option value="">Select Engineer</option>
+          <option>Ahsanul Kabir</option><option>Tamim</option><option>Nazrul Islam</option>
+          <option>Rupchan</option><option>Amit Hasan</option><option>Basudeb Roy</option>
+          <option>ATM Arifuzzaman</option><option>Maruf Hasan</option><option>Jeadul Eshak</option><option>Abu Sayed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Row 3: BNOC Support | ONU MAC | WiFi Scoring -->
+    <div class="row row-3">
+      <div class="input-group">
+        <label><i class="fas fa-headset"></i> BNOC Support</label>
+        <button type="button" id="bnocToggle" class="toggle-btn">
+          <span class="status-text">No</span><i class="fas fa-chevron-down toggle-icon"></i>
+        </button>
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-network-wired"></i> ONU MAC-ADDRESS</label>
+        <input type="text" id="onuMac" placeholder="Enter ONU mac if used">
+      </div>
+      <div class="input-group">
+        <label><i class="fas fa-wifi"></i> WiFi Scoring</label>
+        <button type="button" id="wifiScoringToggle" class="toggle-btn">
+          <span class="status-text">No</span><i class="fas fa-chevron-down toggle-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Row 4: Remarks (full width) -->
+    <div class="row row-1">
+      <div class="input-group">
+        <label><i class="fas fa-comment-dots"></i> Remarks</label>
+        <div class="remarks-wrapper">
+          <textarea
+            class="remarks-box"
+            id="remarks"
+            placeholder="Please Enter Remarks...(If Needed)"
+            maxlength="500"
+            oninput="updateRemarksCount()"
+          ></textarea>
+          <span class="remarks-count" id="remarksCount">0/500</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-done" id="submitBtn" onclick="submitMultipleTasks()">
+      <i class="fas fa-paper-plane"></i> Submit Done Tickets
+    </button>
+    <div class="task-footer"><span class="author-name">© Ahsanul Kabir</span></div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title"><i class="fas fa-chart-bar"></i><span>Completed Task</span></div>
+      <div class="table-filters">
+        <div class="date-filter">
+          <span class="date-filter-label"><i class="fas fa-filter"></i> Filter by Date:</span>
+          <input type="date" id="filterDate" class="date-filter-input">
+          <button class="filter-btn" onclick="filterByDate()"><i class="fas fa-search"></i> Filter</button>
+        </div>
+      </div>
+      <button class="clear-btn" id="clearTableBtn" onclick="clearTable()">
+        <i class="fas fa-trash-alt"></i> Clear Table
+      </button>
+    </div>
+    <div class="table-wrapper">
+      <table id="completedTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th><i class="fas fa-calendar-day"></i> Date</th>
+            <th><i class="fas fa-ticket-alt"></i> Ticket ID</th>
+            <th><i class="fas fa-tag"></i> Category</th>
+            <th><i class="fas fa-user-cog"></i> Engineer</th>
+            <th><i class="fas fa-headset"></i> Backend</th>
+            <th><i class="fas fa-wifi"></i> WiFi</th>
+            <th><i class="fas fa-network-wired"></i> ONU MAC</th>
+            <th><i class="fas fa-check-circle"></i> Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMessage">Task Submitted Successfully!</span>
+</div>
+
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbz9nWFe_q8ns61isE9SWAIAEB9jxY0ttfNtKHn8LSqIyJZpwZOIXPiA2ysPow-4CO-5/exec';
+
+  let pendingDeleteTicket = null;
+  let pendingDeleteRow    = null;
+
+  function updateRemarksCount() {
+    const el = document.getElementById('remarks');
+    document.getElementById('remarksCount').textContent = el.value.length + '/500';
+  }
+
+  class CheckboxDropdown {
+    constructor(id) {
+      this.dd   = document.getElementById(id);
+      this.sel  = this.dd.querySelector('.checkbox-dropdown-select');
+      this.val  = this.dd.querySelector('.checkbox-dropdown-value');
+      this.opts = this.dd.querySelectorAll('.checkbox-option');
+      this.selectedOption = null;
+      this.isOpen = false;
+      this.sel.addEventListener('click', e => { e.stopPropagation(); this.isOpen ? this._close() : this._open(); });
+      this.opts.forEach(o => o.addEventListener('click', e => { e.stopPropagation(); this._pick(o); }));
+      document.addEventListener('click', () => { if (this.isOpen) this._close(); });
+    }
+    _open()  { this.dd.classList.add('active'); this.isOpen = true; }
+    _close() { this.dd.classList.remove('active'); this.isOpen = false; }
+    _pick(o) {
+      this.opts.forEach(x => x.classList.remove('selected'));
+      o.classList.add('selected'); this.selectedOption = o;
+      this.val.textContent = o.getAttribute('data-value');
+      this.val.classList.remove('checkbox-placeholder');
+      this._close();
+    }
+    getValue() { return this.selectedOption ? this.selectedOption.getAttribute('data-value') : ''; }
+    reset() {
+      this.opts.forEach(o => o.classList.remove('selected'));
+      this.selectedOption = null;
+      this.val.textContent = 'Select...';
+      this.val.classList.add('checkbox-placeholder');
+    }
+  }
+
+  function initToggle(id) {
+    const b = document.getElementById(id);
+    b._val = false;
+    b.querySelector('.status-text').textContent = 'No';
+    b.querySelector('.toggle-icon').className   = 'fas fa-chevron-down toggle-icon';
+    b.addEventListener('click', () => {
+      b._val = !b._val;
+      b.classList.toggle('active', b._val);
+      b.querySelector('.status-text').textContent = b._val ? 'Yes' : 'No';
+      b.querySelector('.toggle-icon').className   = b._val ? 'fas fa-check toggle-icon' : 'fas fa-chevron-down toggle-icon';
+    });
+  }
+
+  function resetToggle(id) {
+    const b = document.getElementById(id);
+    b._val = false; b.classList.remove('active');
+    b.querySelector('.status-text').textContent = 'No';
+    b.querySelector('.toggle-icon').className   = 'fas fa-chevron-down toggle-icon';
+  }
+
+  window.onload = function () {
+    updateClock(); loadStoredData(); updateTodayTaskCount();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('taskDate').value   = today;
+    document.getElementById('filterDate').value = today;
+    window.taskCategoryDropdown = new CheckboxDropdown('taskCategoryDropdown');
+    window.taskTypeDropdown     = new CheckboxDropdown('taskTypeDropdown');
+    window.teamTypeDropdown     = new CheckboxDropdown('teamTypeDropdown');
+    initToggle('bnocToggle');
+    initToggle('wifiScoringToggle');
+    document.getElementById('deleteModal').addEventListener('click', function(e){ if(e.target===this) closeDeleteModal(); });
+  };
+
+  function updateClock() {
+    const n = new Date();
+    document.getElementById('headerDate').innerText = n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'2-digit',year:'numeric'});
+    document.getElementById('headerTime').innerText = n.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  setInterval(updateClock, 1000);
+
+  function updateTodayTaskCount() {
+    const today = new Date().toISOString().split('T')[0];
+    const tasks = JSON.parse(localStorage.getItem('completedTasks'))||[];
+    document.getElementById('todayTaskCount').textContent = tasks.filter(t=>t.date===today).length;
+  }
+
+  function refreshSerialNumbers() {
+    document.querySelectorAll('#tableBody tr').forEach((row,i)=>{
+      const c = row.querySelector('td:first-child');
+      if(c) c.textContent = i+1;
+    });
+  }
+
+  function showToast(msg, type='success') {
+    const t=document.getElementById('toast'), m=document.getElementById('toastMessage'), ic=t.querySelector('.toast-icon');
+    const s={error:{bg:'linear-gradient(135deg,rgba(220,38,38,.92),rgba(239,68,68,.92))',i:'✗'},warning:{bg:'linear-gradient(135deg,rgba(245,158,11,.92),rgba(251,191,36,.92))',i:'⚠'},info:{bg:'linear-gradient(135deg,rgba(59,130,246,.92),rgba(37,99,235,.92))',i:'ℹ'},success:{bg:'linear-gradient(135deg,rgba(14,165,233,.92),rgba(59,130,246,.92))',i:'✓'}};
+    const st=s[type]||s.success;
+    t.style.background=st.bg; ic.textContent=st.i; m.textContent=msg;
+    t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+  }
+
+  async function submitMultipleTasks() {
+    const btn = document.getElementById('submitBtn');
+    const ti  = document.getElementById('ticketID').value;
+    const bv  = document.getElementById('bnocToggle')._val ? 'Ahsanul Kabir' : '';
+    const wv  = document.getElementById('wifiScoringToggle')._val ? 'Yes' : 'No';
+    const rm  = document.getElementById('remarks').value.trim();
+
+    const cd = {
+      date:        document.getElementById('taskDate').value,
+      category:    window.taskCategoryDropdown.getValue(),
+      taskType:    window.taskTypeDropdown.getValue(),
+      teamType:    window.teamTypeDropdown.getValue(),
+      engineer:    document.getElementById('engineerName').value,
+      backend:     bv,
+      wifiScoring: wv,
+      onuMac:      document.getElementById('onuMac').value,
+      remarks:     rm
+    };
+
+    const err=[];
+    if(!ti.trim()) err.push('Ticket ID');
+    if(!cd.category) err.push('Task Category');
+    if(!cd.taskType) err.push('Task Type');
+    if(!cd.teamType) err.push('Team Type');
+    if(!cd.engineer) err.push('Engineer Name');
+    if(err.length){ showToast('Please fill: '+err.join(', '),'warning'); return; }
+
+    const ids = ti.split(',').map(t=>t.trim()).filter(Boolean);
+    if(!ids.length){ showToast('Please enter at least one Ticket ID!','warning'); return; }
+
+    const stored = JSON.parse(localStorage.getItem('completedTasks'))||[];
+    const ex = new Set(stored.map(t=>t.ticket.toUpperCase()));
+    for(const id of ids){ if(ex.has(id.toUpperCase())){ showToast('This Ticket ID has been entered earlier','warning'); return; } }
+
+    btn.disabled=true; btn.innerHTML=`<i class="fas fa-spinner fa-spin"></i> Processing ${ids.length} Ticket(s)...`;
+
+    let ok=0;
+    for(let i=0;i<ids.length;i++){
+      const fd={...cd,ticket:ids[i]};
+      try{
+        await fetch(scriptURL,{method:'POST',mode:'no-cors',body:JSON.stringify(fd)});
+        saveDataLocally(fd); addTableRow(fd); ok++;
+        if(ids.length>1) btn.innerHTML=`<i class="fas fa-spinner fa-spin"></i> Processing ${i+1}/${ids.length}...`;
+      } catch(e){ console.error(e); }
+      await new Promise(r=>setTimeout(r,100));
+    }
+
+    updateTodayTaskCount(); refreshSerialNumbers();
+
+    if(ok>0){
+      showToast(`Successfully submitted ${ok} ticket(s)!`,'success');
+      btn.style.background='linear-gradient(135deg,#10b981,#0ea5e9)';
+      btn.innerHTML=`<i class="fas fa-check-circle"></i> ${ok} Ticket(s) Submitted!`;
+      setTimeout(()=>{ btn.innerHTML=`<i class="fas fa-paper-plane"></i> Submit Done Tickets`; btn.style.background=''; },2000);
+      document.getElementById('ticketID').value  = '';
+      document.getElementById('onuMac').value    = '';
+      document.getElementById('remarks').value   = '';
+      document.getElementById('remarksCount').textContent = '0/500';
+      resetToggle('bnocToggle');
+      resetToggle('wifiScoringToggle');
+    } else {
+      showToast('Error submitting tickets! Please try again.','error');
+    }
+    btn.disabled=false;
+  }
+
+  function addTableRow(data) {
+    const tb  = document.getElementById('tableBody');
+    const row = tb.insertRow(0);
+    const [y,m,d] = data.date.split('-');
+    const bd  = data.backend && data.backend.trim() ? data.backend : '-';
+    const ou  = data.onuMac ? (data.onuMac.length>17 ? data.onuMac.substring(0,17)+'…' : data.onuMac) : '-';
+    const st  = data.ticket.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+    row.setAttribute('data-ticket', data.ticket);
+    row.innerHTML = `
+      <td style="text-align:center;font-weight:600;">—</td>
+      <td style="font-weight:600;">${d}-${m}-${y}</td>
+      <td>
+        <div class="ticket-cell">
+          <span style="font-weight:700;font-family:'Montserrat',sans-serif;">${data.ticket}</span>
+          <button class="btn-delete-inline" title="Delete this ticket" onclick="openDeleteModal('${st}',this)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </td>
+      <td>${data.category}</td>
+      <td style="font-weight:600;">${data.engineer}</td>
+      <td>${bd}</td>
+      <td style="font-weight:600;">${data.wifiScoring||'No'}</td>
+      <td class="onu-mac" title="${data.onuMac||''}">${ou}</td>
+      <td><span class="badge">SYNCED</span></td>`;
+    row.style.animation = 'fadeIn .4s ease-out';
+  }
+
+  function openDeleteModal(tid,btn){
+    pendingDeleteTicket=tid; pendingDeleteRow=btn.closest('tr');
+    document.getElementById('modalTicketID').textContent=tid;
+    document.getElementById('deleteModal').classList.add('show');
+    const cb=document.getElementById('modalConfirmBtn');
+    cb.disabled=false; cb.innerHTML='<i class="fas fa-trash-alt"></i> Delete';
+  }
+
+  function closeDeleteModal(){
+    document.getElementById('deleteModal').classList.remove('show');
+    pendingDeleteTicket=null; pendingDeleteRow=null;
+  }
+
+  async function confirmDelete(){
+    if(!pendingDeleteTicket||!pendingDeleteRow) return;
+    const cb=document.getElementById('modalConfirmBtn');
+    cb.disabled=true; cb.innerHTML='<i class="fas fa-spinner fa-spin"></i> Deleting…';
+    const tid=pendingDeleteTicket, row=pendingDeleteRow;
+    try{ await fetch(scriptURL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'delete',ticket:tid})}); }
+    catch(e){ console.error(e); }
+    let tasks=JSON.parse(localStorage.getItem('completedTasks'))||[];
+    tasks=tasks.filter(t=>t.ticket.toUpperCase()!==tid.toUpperCase());
+    localStorage.setItem('completedTasks',JSON.stringify(tasks));
+    closeDeleteModal();
+    row.classList.add('row-deleting');
+    setTimeout(()=>{ row.remove(); updateTodayTaskCount(); refreshSerialNumbers(); showToast(`Ticket "${tid}" deleted!`,'success'); },400);
+  }
+
+  function saveDataLocally(data){
+    const tasks=JSON.parse(localStorage.getItem('completedTasks'))||[];
+    tasks.push(data); localStorage.setItem('completedTasks',JSON.stringify(tasks));
+  }
+
+  function loadStoredData(){
+    const tasks=JSON.parse(localStorage.getItem('completedTasks'))||[];
+    tasks.forEach(t=>addTableRow(t)); refreshSerialNumbers(); updateTodayTaskCount();
+  }
+
+  function filterByDate(){
+    const fd=document.getElementById('filterDate').value;
+    const tasks=JSON.parse(localStorage.getItem('completedTasks'))||[];
+    document.getElementById('tableBody').innerHTML='';
+    if(!fd){ tasks.forEach(t=>addTableRow(t)); refreshSerialNumbers(); showToast('Showing all tasks','info'); return; }
+    const fil=tasks.filter(t=>t.date===fd);
+    if(!fil.length){ showToast('No tasks found for selected date','warning'); }
+    else{ fil.forEach(t=>addTableRow(t)); refreshSerialNumbers(); showToast(`Showing ${fil.length} task(s) for ${fd}`,'success'); }
+  }
+
+  function clearTable(){
+    if(!confirm('Are you sure you want to clear all completed tasks?\nThis action cannot be undone!')) return;
+    document.getElementById('tableBody').innerHTML='';
+    localStorage.removeItem('completedTasks');
+    const btn=document.getElementById('clearTableBtn');
+    btn.disabled=true; btn.innerHTML='<i class="fas fa-check"></i> Cleared';
+    updateTodayTaskCount(); showToast('All completed tasks cleared!','success');
+    setTimeout(()=>{ btn.disabled=false; btn.innerHTML='<i class="fas fa-trash-alt"></i> Clear Table'; },1500);
+  }
+</script>
+</body>
+</html>
