@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Link3 Daily Work Dashboard</title>
 
-<!-- ======== FIREBASE CONFIG ======== -->
+<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -47,61 +47,81 @@
     try { await push(ticketsRef, ticketData); return true; }
     catch(e) { console.error(e); return false; }
   };
-
   window._fbDelete = async function(firebaseKey) {
     try { await remove(ref(db, 'tickets/' + firebaseKey)); return true; }
     catch(e) { console.error(e); return false; }
   };
 </script>
-<!-- ======== END FIREBASE ======== -->
 
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Merriweather',serif}
-:root{--navy:#0a2557;--navy2:#0d2f6b;--blue:#1565c0;--blue2:#1976d2;--accent:#2196f3;--light:#e8f1fb;--lighter:#f0f6ff;--white:#fff;--gray:#f4f7fb;--text:#1a2340;--muted:#6b7a99;--border:#d0ddf0;--green:#1b8a4c;--red:#c0392b;--amber:#e67e00}
-.layout{display:flex;height:640px;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 32px rgba(10,37,87,0.13)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Outfit',sans-serif}
+:root{--navy:#0a2557;--blue:#1565c0;--blue2:#1976d2;--accent:#2196f3;--light:#e8f1fb;--lighter:#f0f6ff;--white:#fff;--gray:#f4f7fb;--text:#1a2340;--muted:#6b7a99;--border:#d0ddf0;--green:#1b8a4c;--red:#c0392b}
+
+/* ===== LOGIN SCREEN ===== */
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0a2557 0%,#0d3a8a 50%,#1565c0 100%);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#fff;border-radius:20px;padding:40px 36px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo-icon{background:linear-gradient(135deg,#0a2557,#1976d2);border-radius:14px;width:60px;height:60px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px}
+.login-logo-icon span{font-size:18px;font-weight:800;color:#fff;font-family:'Outfit',sans-serif}
+.login-title{font-size:20px;font-weight:700;color:var(--navy);font-family:'Outfit',sans-serif}
+.login-sub{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px}
+.login-field{margin-bottom:16px}
+.login-field label{display:block;font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px;font-family:'Outfit',sans-serif}
+.login-field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);background:var(--lighter);transition:border-color .2s;font-family:'Outfit',sans-serif}
+.login-field input:focus{outline:none;border-color:var(--accent);background:#fff}
+.login-btn{width:100%;padding:12px;background:linear-gradient(90deg,#0d3b9e,#1976d2);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.5px;margin-top:4px;transition:opacity .2s}
+.login-btn:hover{opacity:.9}
+.login-err{background:#fff0f0;border:1px solid #ffd0d0;border-radius:8px;padding:9px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none;font-family:'Outfit',sans-serif}
+.login-err.show{display:block}
+.login-footer{text-align:center;margin-top:20px;font-size:10px;color:var(--muted);font-family:'Outfit',sans-serif}
+
+/* ===== MAIN APP ===== */
+#app-screen{display:none}
+.layout{display:flex;height:100vh;overflow:hidden}
 .sidebar{width:230px;background:linear-gradient(175deg,#0a2557 60%,#0d3a8a);display:flex;flex-direction:column;flex-shrink:0}
-.sb-logo{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px}
-.sb-logo-box{background:#fff;border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px;background:#fff}
+.sb-logo-box{background:#fff;border-radius:8px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sb-logo-box span{font-size:10px;font-weight:700;color:var(--navy);line-height:1.1;text-align:center}
 .sb-logo-info{flex:1}
-.sb-co{font-size:10.5px;font-weight:600;color:#fff;line-height:1.3;font-family:'Outfit',sans-serif}
-.sb-zone{background:rgba(255,255,255,0.18);border-radius:4px;padding:2px 8px;font-size:9.5px;color:#b8d4ff;margin-top:4px;display:inline-block;letter-spacing:.5px}
-.sb-user{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-co{font-size:10.5px;font-weight:700;color:#0a2557;line-height:1.3;font-family:'Outfit',sans-serif}
+.sb-zone{background:#1251b5;border-radius:4px;padding:2px 8px;font-size:9.5px;color:#fff;margin-top:4px;display:inline-flex;align-items:center;gap:4px;letter-spacing:.5px;font-family:'Outfit',sans-serif;font-weight:600}
+.sb-user{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
 .sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#2196f3,#1565c0);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
 .sb-uname{font-size:12px;font-weight:600;color:#fff;font-family:'Outfit',sans-serif}
 .sb-urole{font-size:10px;color:#90b8e8;letter-spacing:.5px;font-family:'Outfit',sans-serif}
-.sb-nav{flex:1;padding:10px 0}
-.nav-item{display:flex;align-items:center;gap:11px;padding:10px 18px;cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;font-weight:400;transition:all .18s;border-left:3px solid transparent;font-family:'Outfit',sans-serif}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;cursor:pointer;color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;transition:all .18s;border-left:3px solid transparent;font-family:'Outfit',sans-serif}
 .nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
-.nav-item.active{background:rgba(255,255,255,0.13);color:#fff;border-left:3px solid #64b5f6;font-weight:500}
+.nav-item.active{background:rgba(33,150,243,0.18);color:#fff;border-left:3px solid #42a5f5;font-weight:700;border-radius:0 8px 8px 0}
+.nav-item.admin-only{display:none}
 .nav-icon{font-size:15px;opacity:.85;width:18px;text-align:center}
 .sb-bottom{padding:12px 18px;border-top:1px solid rgba(255,255,255,0.1)}
 .sb-link{display:flex;align-items:center;gap:9px;padding:7px 0;color:rgba(255,255,255,0.55);font-size:12px;cursor:pointer;transition:color .15s}
 .sb-link:hover{color:#fff}
-.sb-prepared{text-align:center;margin-top:12px;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:1px;line-height:1.6}
+.sb-prepared{text-align:center;margin-top:10px;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:1px;line-height:1.6}
 .sb-prepared b{color:rgba(255,255,255,0.55);font-size:10px;letter-spacing:1.5px}
 .main{flex:1;display:flex;flex-direction:column;background:var(--gray);overflow:hidden}
-.top-bar{background:linear-gradient(90deg,#1251b5,#1976d2,#42a5f5);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.top-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:1.5px;font-family:'Outfit',sans-serif}
+.top-bar{background:linear-gradient(90deg,#1251b5,#1976d2,#42a5f5);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.top-title{font-size:24px;font-weight:900;color:#fff;letter-spacing:3px;font-family:'Outfit',sans-serif;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,0.15)}
 .top-sub{font-size:10px;color:rgba(255,255,255,0.75);letter-spacing:3px;margin-top:1px;font-family:'Outfit',sans-serif}
 .top-clock{text-align:right}
-.top-date{font-size:11.5px;color:rgba(255,255,255,0.9);font-weight:500}
-.top-time{font-size:17px;font-weight:600;color:#fff;background:rgba(255,255,255,0.18);border-radius:5px;padding:3px 12px;margin-top:3px;letter-spacing:.5px}
+.top-date{font-size:11px;color:rgba(255,255,255,0.9);font-weight:600;letter-spacing:.5px;font-family:'Outfit',sans-serif}
+.top-time{font-size:16px;font-weight:700;color:#fff;background:rgba(255,255,255,0.22);border-radius:20px;padding:4px 16px;margin-top:3px;letter-spacing:.5px;font-family:'Outfit',sans-serif}
 .content{flex:1;overflow-y:auto;padding:20px 22px}
 .page{display:none}
 .page.active{display:block}
-.form-card{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:22px 24px;box-shadow:0 2px 12px rgba(10,37,87,0.06)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 20px}
-.fg label{font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1.2px;margin-bottom:5px;display:flex;align-items:center;gap:5px;font-family:'Outfit',sans-serif}
-.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--lighter);transition:border-color .2s;appearance:none}
+.form-card{background:linear-gradient(135deg,#f0f6ff 0%,#e8f1fb 100%);border-radius:16px;border:1.5px solid var(--border);padding:24px 28px;box-shadow:0 4px 20px rgba(10,37,87,0.08)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px 22px}
+.fg label{font-size:10.5px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-family:'Outfit',sans-serif;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--lighter);transition:border-color .2s;appearance:none;font-family:'Outfit',sans-serif}
 .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--accent);background:#fff}
 .fg textarea{resize:vertical;min-height:64px}
 .fg-full{grid-column:1/-1}
 .submit-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 .ncss-tag{font-size:11px;color:var(--blue);font-weight:500}
-.btn-submit{background:linear-gradient(90deg,#0d3b9e,#1976d2);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;letter-spacing:.3px;transition:opacity .2s}
-.btn-submit:hover{opacity:.9}
+.btn-submit{background:linear-gradient(90deg,#0d2d7a,#1251b5);color:#fff;border:none;padding:13px 32px;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:10px;letter-spacing:1.5px;transition:all .2s;text-transform:uppercase;box-shadow:0 4px 18px rgba(13,45,122,0.35)}
+.btn-submit:hover{background:linear-gradient(90deg,#1251b5,#1976d2);box-shadow:0 6px 24px rgba(13,45,122,0.45);transform:translateY(-1px)}
 .btn-submit:active{transform:scale(.98)}
 .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
 .page-ttl{font-size:17px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;font-family:'Outfit',sans-serif}
@@ -125,16 +145,18 @@
 .tbl-title{font-size:13px;font-weight:600;color:var(--navy);font-family:'Outfit',sans-serif}
 .tbl-badge{font-size:11px;background:var(--light);color:var(--blue);padding:3px 12px;border-radius:20px;font-weight:600;font-family:'Outfit',sans-serif}
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'Merriweather',serif}
+table{width:100%;border-collapse:collapse;font-size:12px}
 thead tr{background:var(--lighter)}
 th{padding:8px 10px;text-align:left;font-weight:700;font-size:10px;color:var(--blue);border-bottom:2px solid var(--border);white-space:nowrap;letter-spacing:.5px;font-family:'Outfit',sans-serif}
-td{padding:9px 10px;border-bottom:1px solid #eaf1fb;color:var(--text);vertical-align:middle;font-family:'Merriweather',serif;font-size:11.5px}
+td{padding:9px 10px;border-bottom:1px solid #eaf1fb;color:var(--text);vertical-align:middle;font-size:11.5px}
 tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:#f5f9ff}
 .chip{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .chip-yes{background:#e3f5ec;color:var(--green)}
 .chip-no{background:#f1f4f9;color:var(--muted)}
 .chip-cat{background:var(--light);color:var(--blue)}
+.chip-admin{background:#fff3e0;color:#e65100}
+.chip-eng{background:var(--light);color:var(--blue)}
 .empty-box{text-align:center;padding:48px 0;color:var(--muted)}
 .empty-box .ei{font-size:36px;margin-bottom:8px;opacity:.4}
 .empty-box p{font-size:13px}
@@ -149,45 +171,144 @@ tbody tr:hover td{background:#f5f9ff}
 .fb-status.connected .fb-dot{background:#1b8a4c}
 .fb-status.disconnected .fb-dot{background:#c0392b;animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ===== YES/NO SINGLE TOGGLE BUTTON ===== */
+.toggle-single{width:100%;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);border-radius:8px;background:var(--lighter);color:var(--muted);transition:all .25s;font-family:'Outfit',sans-serif;letter-spacing:1px;display:flex;align-items:center;justify-content:space-between;gap:8px;outline:none}
+.toggle-single .ts-val{flex:1;text-align:center;font-size:14px;font-weight:800;letter-spacing:1.5px}
+.toggle-single .ts-arrow{font-size:11px;opacity:.6}
+.toggle-single.is-yes{background:linear-gradient(90deg,#1251b5,#1976d2,#2196f3);border-color:#1251b5;color:#fff}
+.toggle-single.is-yes .ts-arrow{opacity:.9}
+.toggle-single.is-no{background:var(--lighter);border-color:var(--border);color:var(--muted)}
+.toggle-single:hover{border-color:var(--accent)}
+
+/* ===== CUSTOM CHECKBOX DROPDOWN ===== */
+.cdd-wrap{position:relative;width:100%}
+.cdd-btn{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--muted);background:var(--lighter);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:border-color .2s}
+.cdd-btn:hover,.cdd-btn.open{border-color:var(--accent);background:#fff;color:var(--text)}
+.cdd-arrow{font-size:10px;color:var(--accent);transition:transform .2s}
+.cdd-list{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--accent);border-radius:8px;z-index:999;box-shadow:0 6px 24px rgba(21,101,192,0.13);overflow:hidden}
+.cdd-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--text);transition:background .15s}
+.cdd-item:hover{background:var(--lighter)}
+.cdd-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;border-radius:4px}
+.cdd-item span{font-family:'Outfit',sans-serif}
 .search-box{padding:7px 11px 7px 32px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7a99' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;min-width:160px}
+
+/* Change Password Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,37,87,0.5);display:none;align-items:center;justify-content:center;z-index:8888}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:32px 28px;width:360px;box-shadow:0 16px 48px rgba(0,0,0,0.2)}
+.modal-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:20px;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:8px}
+.modal-field{margin-bottom:14px}
+.modal-field label{display:block;font-size:10px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:5px;font-family:'Outfit',sans-serif}
+.modal-field input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:var(--lighter)}
+.modal-field input:focus{outline:none;border-color:var(--accent);background:#fff}
+.modal-btns{display:flex;gap:10px;margin-top:18px}
+.btn-modal-ok{flex:1;padding:10px;background:linear-gradient(90deg,#0d3b9e,#1976d2);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.btn-modal-cancel{flex:1;padding:10px;background:var(--lighter);color:var(--navy);border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.modal-err{font-size:11px;color:var(--red);margin-top:6px;display:none}
+.modal-err.show{display:block}
 </style>
 </head>
 <body>
 
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><span>L3</span></div>
+      <div class="login-title">Link3 Dashboard</div>
+      <div class="login-sub">MOTIJHEEL ZONE · NCSS TEAM</div>
+    </div>
+    <div class="login-err" id="login-err">❌ Username অথবা Password ভুল!</div>
+    <div class="login-field">
+      <label>👤 USERNAME</label>
+      <input type="text" id="l-user" placeholder="Username লিখুন" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>🔑 PASSWORD</label>
+      <input type="password" id="l-pass" placeholder="Password লিখুন" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">🚀 LOGIN</button>
+    <div class="login-footer">PREPARED BY AHSANUL KABIR</div>
+  </div>
+</div>
+
+<!-- ===== CHANGE PASSWORD MODAL ===== -->
+<div class="modal-overlay" id="chpw-modal">
+  <div class="modal-box">
+    <div class="modal-title">🔑 Change Password</div>
+    <div class="modal-field">
+      <label>CURRENT PASSWORD</label>
+      <input type="password" id="cp-old" placeholder="বর্তমান password">
+    </div>
+    <div class="modal-field">
+      <label>NEW PASSWORD</label>
+      <input type="password" id="cp-new" placeholder="নতুন password (min 4 character)">
+    </div>
+    <div class="modal-field">
+      <label>CONFIRM NEW PASSWORD</label>
+      <input type="password" id="cp-confirm" placeholder="আবার নতুন password">
+    </div>
+    <div class="modal-err" id="cp-err"></div>
+    <div class="modal-btns">
+      <button class="btn-modal-cancel" onclick="closeChpw()">Cancel</button>
+      <button class="btn-modal-ok" onclick="savePassword()">✅ Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="app-screen">
 <div class="layout">
 <div class="sidebar">
   <div class="sb-logo">
-    <div class="sb-logo-box"><span>Link3</span></div>
+    <div class="sb-logo-box" style="background:#fff;width:52px;height:52px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:4px">
+      <svg viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <!-- Link3 Logo SVG - blue square with L3 text style -->
+        <rect width="80" height="60" rx="4" fill="#fff"/>
+        <!-- Blue box icon -->
+        <rect x="2" y="2" width="34" height="56" rx="4" fill="#1251b5"/>
+        <!-- L shape in box -->
+        <rect x="7" y="7" width="6" height="30" rx="1.5" fill="#fff"/>
+        <rect x="7" y="31" width="18" height="6" rx="1.5" fill="#fff"/>
+        <!-- Right side: Link3 text -->
+        <text x="42" y="22" font-family="Arial Black,Arial,sans-serif" font-size="13" font-weight="900" fill="#1251b5">Link3</text>
+        <text x="42" y="40" font-family="Arial,sans-serif" font-size="8.5" font-weight="400" fill="#555">Technologies</text>
+        <text x="42" y="52" font-family="Arial,sans-serif" font-size="8.5" font-weight="400" fill="#555">Ltd.</text>
+      </svg>
+    </div>
     <div class="sb-logo-info">
       <div class="sb-co">Link3 Technologies Ltd</div>
       <div class="sb-zone">🏢 MOTIJHEEL ZONE</div>
     </div>
   </div>
   <div class="sb-user">
-    <div class="sb-avatar">AD</div>
-    <div><div class="sb-uname">Admin</div><div class="sb-urole">ADMINISTRATOR</div></div>
+    <div class="sb-avatar" id="sb-avatar">AD</div>
+    <div>
+      <div class="sb-uname" id="sb-uname">Admin</div>
+      <div class="sb-urole" id="sb-urole">ADMINISTRATOR</div>
+    </div>
   </div>
   <nav class="sb-nav">
     <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🌐</span>Dashboard</div>
     <div class="nav-item" onclick="showPage('mytask',this)"><span class="nav-icon">📋</span>My Task</div>
     <div class="nav-item" onclick="showPage('taskreport',this)"><span class="nav-icon">📊</span>Task Report</div>
-    <div class="nav-item" onclick="showPage('alltask',this)"><span class="nav-icon">✅</span>All Completed Tasks</div>
-    <div class="nav-item" onclick="showPage('devices',this)"><span class="nav-icon">🖥️</span>Used Devices</div>
-    <div class="nav-item" onclick="showPage('wifi',this)"><span class="nav-icon">📶</span>WiFi Scoring</div>
-    <div class="nav-item" onclick="showPage('users',this)"><span class="nav-icon">👥</span>User Management</div>
+    <div class="nav-item admin-only" id="nav-alltask" onclick="showPage('alltask',this)"><span class="nav-icon">✅</span>All Completed Tasks</div>
+    <div class="nav-item admin-only" id="nav-devices" onclick="showPage('devices',this)"><span class="nav-icon">🖥️</span>Used Devices</div>
+    <div class="nav-item admin-only" id="nav-wifi" onclick="showPage('wifi',this)"><span class="nav-icon">📶</span>WiFi Scoring</div>
+    <div class="nav-item admin-only" id="nav-users" onclick="showPage('users',this)"><span class="nav-icon">👥</span>User Management</div>
   </nav>
   <div class="sb-bottom">
-    <div class="sb-link"><span>🔑</span> Change Password</div>
-    <div class="sb-link"><span>🚪</span> Logout</div>
+    <div class="sb-link" onclick="openChpw()"><span>🔑</span> Change Password</div>
+    <div class="sb-link" onclick="doLogout()"><span>🚪</span> Logout</div>
     <div class="sb-prepared">PREPARED BY<br><b>AHSANUL KABIR</b></div>
   </div>
 </div>
 
 <div class="main">
   <div class="top-bar">
-    <div>
+    <div style="flex:1;text-align:center;margin:0 12px">
       <div class="top-title" id="topTitle">DAILY WORK DASHBOARD</div>
-      <div class="top-sub">MOTIJHEEL ZONE</div>
+      <div class="top-sub" style="font-size:11px;letter-spacing:4px;margin-top:2px;opacity:.85">MOTIJHEEL ZONE</div>
     </div>
     <div style="display:flex;align-items:center;gap:14px">
       <div class="fb-status disconnected" id="fb-status">
@@ -203,46 +324,94 @@ tbody tr:hover td{background:#f5f9ff}
 
   <div class="content">
 
+    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="form-card">
         <div class="form-grid">
           <div class="fg"><label>📅 WORK DATE</label><input type="date" id="f-date"></div>
           <div class="fg"><label>🎫 TICKET ID</label><input type="text" id="f-ticket" placeholder="e.g. L3-31Jan26-1234"></div>
-          <div class="fg"><label>🏷️ TASK CATEGORY</label>
-            <select id="f-cat">
-              <option value="">Select Category</option>
-              <option>Installation</option><option>Troubleshoot</option><option>CR</option>
-              <option>Survey</option><option>Maintenance</option><option>Relocation</option><option>Upgrade</option>
-            </select>
+          <!-- TASK CATEGORY custom dropdown -->
+          <div class="fg" style="position:relative">
+            <label>🏷️ TASK CATEGORY</label>
+            <div class="cdd-wrap" id="cdd-cat-wrap">
+              <div class="cdd-btn" id="cdd-cat-btn" onclick="toggleCdd('cat')">
+                <span id="cdd-cat-label">Select Category</span>
+                <span class="cdd-arrow" id="cdd-cat-arrow">▲</span>
+              </div>
+              <div class="cdd-list" id="cdd-cat-list" style="display:none">
+                <label class="cdd-item"><input type="checkbox" name="f-cat" value="Installation" onchange="pickCdd('cat',this)"><span>Installation</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-cat" value="Troubleshoot" onchange="pickCdd('cat',this)"><span>Troubleshoot</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-cat" value="Survey" onchange="pickCdd('cat',this)"><span>Survey</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-cat" value="CR" onchange="pickCdd('cat',this)"><span>CR</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-cat" value="Non Ticket" onchange="pickCdd('cat',this)"><span>Non Ticket</span></label>
+              </div>
+            </div>
+            <input type="hidden" id="f-cat" value="">
           </div>
-          <div class="fg"><label>🔧 TASK TYPE</label>
-            <select id="f-tasktype">
-              <option value="">Select Task Type</option>
-              <option>FTTH Installation</option><option>ONU Replacement</option><option>Cable Fault</option>
-              <option>Splitter Change</option><option>Port Migration</option><option>Speed Upgrade</option>
-            </select>
+          <!-- TASK TYPE custom dropdown -->
+          <div class="fg" style="position:relative">
+            <label>🔧 TASK TYPE</label>
+            <div class="cdd-wrap" id="cdd-tt-wrap">
+              <div class="cdd-btn" id="cdd-tt-btn" onclick="toggleCdd('tt')">
+                <span id="cdd-tt-label">Select Task Type</span>
+                <span class="cdd-arrow" id="cdd-tt-arrow">▲</span>
+              </div>
+              <div class="cdd-list" id="cdd-tt-list" style="display:none">
+                <label class="cdd-item"><input type="checkbox" name="f-tasktype" value="Phone support" onchange="pickCdd('tt',this)"><span>Phone support</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-tasktype" value="Physical support" onchange="pickCdd('tt',this)"><span>Physical support</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-tasktype" value="Back office support for Tech" onchange="pickCdd('tt',this)"><span>Back office support for Tech</span></label>
+              </div>
+            </div>
+            <input type="hidden" id="f-tasktype" value="">
           </div>
-          <div class="fg"><label>👥 TEAM TYPE</label>
-            <select id="f-team">
-              <option value="">Select Team Type</option>
-              <option>Field Team</option><option>CEx Team</option><option>NCSS Team</option><option>Joint Team</option>
-            </select>
+          <!-- TEAM TYPE custom dropdown -->
+          <div class="fg" style="position:relative">
+            <label>👥 TEAM TYPE</label>
+            <div class="cdd-wrap" id="cdd-tm-wrap">
+              <div class="cdd-btn" id="cdd-tm-btn" onclick="toggleCdd('tm')">
+                <span id="cdd-tm-label">Select Team Type</span>
+                <span class="cdd-arrow" id="cdd-tm-arrow">▲</span>
+              </div>
+              <div class="cdd-list" id="cdd-tm-list" style="display:none">
+                <label class="cdd-item"><input type="checkbox" name="f-team" value="Engineer" onchange="pickCdd('tm',this)"><span>Engineer</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-team" value="Single Tech & Engineer" onchange="pickCdd('tm',this)"><span>Single Tech &amp; Engineer</span></label>
+                <label class="cdd-item"><input type="checkbox" name="f-team" value="FI Team" onchange="pickCdd('tm',this)"><span>FI Team</span></label>
+              </div>
+            </div>
+            <input type="hidden" id="f-team" value="">
           </div>
+          <!-- ENGINEER NAME -->
           <div class="fg"><label>👤 ENGINEER NAME</label>
             <select id="f-eng">
               <option value="">Select Engineer</option>
-              <option>Md. Emon</option><option>Md. Rahim</option><option>Md. Karim</option>
-              <option>Md. Sumon</option><option>Md. Rafi</option><option>Md. Arif</option>
+              <option>Ahsanul Kabir</option>
+              <option>Tamim</option>
+              <option>Nazrul Islam</option>
+              <option>Rupchan</option>
+              <option>Amit Hasan</option>
+              <option>Basudeb Roy</option>
+              <option>ATM Arifuzzaman</option>
+              <option>Maruf Hasan</option>
+              <option>Jeadul Eshak</option>
+              <option>Abu Sayed</option>
             </select>
           </div>
           <div class="fg"><label>🎧 BNOC/BACKEND SUPPORT</label>
-            <select id="f-bnoc"><option value="NO">NO</option><option value="YES">YES</option></select>
+            <button type="button" class="toggle-single is-no" id="btn-bnoc" onclick="toggleSingle('bnoc')">
+              <span class="ts-val" id="ts-bnoc-val">NO</span>
+              <span class="ts-arrow">&#10549;</span>
+            </button>
+            <input type="hidden" id="f-bnoc" value="NO">
           </div>
           <div class="fg"><label>📡 ONU MAC-ADDRESS</label>
             <input type="text" id="f-mac" placeholder="Enter ONU MAC if used">
           </div>
           <div class="fg"><label>📶 WIFI SCORING</label>
-            <select id="f-wifi"><option value="NO">NO</option><option value="YES">YES</option></select>
+            <button type="button" class="toggle-single is-no" id="btn-wifi" onclick="toggleSingle('wifi')">
+              <span class="ts-val" id="ts-wifi-val">NO</span>
+              <span class="ts-arrow">&#10549;</span>
+            </button>
+            <input type="hidden" id="f-wifi" value="NO">
           </div>
           <div class="fg fg-full"><label>💬 REMARKS</label>
             <textarea id="f-remarks" placeholder="Please Enter Remarks...(If Needed)" maxlength="500"></textarea>
@@ -250,11 +419,12 @@ tbody tr:hover td{background:#f5f9ff}
         </div>
         <div class="submit-row">
           <div class="ncss-tag">NCSS Team (CEx)</div>
-          <button class="btn-submit" onclick="submitTicket()">✈ SUBMIT DONE TICKETS</button>
+          <button class="btn-submit" onclick="submitTicket()"><span style="font-size:16px">&#9992;</span> SUBMIT DONE TICKETS</button>
         </div>
       </div>
     </div>
 
+    <!-- MY TASK -->
     <div class="page" id="page-mytask">
       <div class="page-header">
         <div class="page-ttl">📋 My Task</div>
@@ -277,12 +447,13 @@ tbody tr:hover td{background:#f5f9ff}
         </div>
         <div class="tbl-wrap"><table>
           <thead><tr><th>#</th><th>Date</th><th>Ticket ID</th><th>Category</th><th>Task Type</th>
-          <th>Team</th><th>Engineer</th><th>BNOC</th><th>MAC Address</th><th>WiFi</th><th>Remarks</th><th></th></tr></thead>
+          <th>Team</th><th>Engineer</th><th>BNOC</th><th>MAC</th><th>WiFi</th><th>Remarks</th><th></th></tr></thead>
           <tbody id="mt-tbody"></tbody>
         </table></div>
       </div>
     </div>
 
+    <!-- TASK REPORT -->
     <div class="page" id="page-taskreport">
       <div class="page-header">
         <div class="page-ttl">📊 Task Report</div>
@@ -294,7 +465,7 @@ tbody tr:hover td{background:#f5f9ff}
             <option>Installation</option><option>Troubleshoot</option><option>CR</option>
             <option>Survey</option><option>Maintenance</option><option>Relocation</option><option>Upgrade</option>
           </select>
-          <input class="search-box" type="text" id="tr-search" placeholder="Search..." oninput="renderReport()" style="min-width:130px">
+          <input class="search-box" type="text" id="tr-search" placeholder="Search..." oninput="renderReport()">
         </div>
       </div>
       <div class="stat-row" id="tr-stats"></div>
@@ -308,18 +479,29 @@ tbody tr:hover td{background:#f5f9ff}
       </div>
     </div>
 
+    <!-- ALL COMPLETED TASKS (Admin only) -->
     <div class="page" id="page-alltask">
       <div class="page-header">
         <div class="page-ttl">✅ All Completed Tasks</div>
         <div class="filter-bar">
           <select id="at-eng" onchange="renderAll()" style="font-size:12px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px">
             <option value="">All Engineers</option>
-            <option>Md. Emon</option><option>Md. Rahim</option><option>Md. Karim</option>
-            <option>Md. Sumon</option><option>Md. Rafi</option><option>Md. Arif</option>
+            <option>Ahsanul Kabir</option>
+            <option>Tamim</option>
+            <option>Nazrul Islam</option>
+            <option>Rupchan</option>
+            <option>Amit Hasan</option>
+            <option>Basudeb Roy</option>
+            <option>ATM Arifuzzaman</option>
+            <option>Maruf Hasan</option>
+            <option>Jeadul Eshak</option>
+            <option>Abu Sayed</option>
           </select>
           <select id="at-team" onchange="renderAll()" style="font-size:12px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px">
             <option value="">All Teams</option>
-            <option>Field Team</option><option>CEx Team</option><option>NCSS Team</option><option>Joint Team</option>
+            <option>Engineer</option>
+            <option>Single Tech &amp; Engineer</option>
+            <option>FI Team</option>
           </select>
           <input class="search-box" type="text" id="at-search" placeholder="Search..." oninput="renderAll()">
         </div>
@@ -335,6 +517,7 @@ tbody tr:hover td{background:#f5f9ff}
       </div>
     </div>
 
+    <!-- USED DEVICES (Admin only) -->
     <div class="page" id="page-devices">
       <div class="page-header">
         <div class="page-ttl">🖥️ Used Devices</div>
@@ -349,34 +532,29 @@ tbody tr:hover td{background:#f5f9ff}
       </div>
     </div>
 
+    <!-- WIFI SCORING (Admin only) -->
     <div class="page" id="page-wifi">
       <div class="page-header">
         <div class="page-ttl">📶 WiFi Scoring</div>
-        <input class="search-box" type="text" id="wf-search" placeholder="Search ticket / engineer..." oninput="renderWifi()">
+        <input class="search-box" type="text" id="wf-search" placeholder="Search..." oninput="renderWifi()">
       </div>
       <div class="tbl-card">
         <div class="tbl-top"><span class="tbl-title">WiFi Scored Tickets</span><span class="tbl-badge" id="wf-cnt">0 records</span></div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>#</th><th>Date</th><th>Ticket ID</th><th>Category</th><th>Engineer</th><th>Team</th><th>WiFi Score</th><th>Remarks</th></tr></thead>
+          <thead><tr><th>#</th><th>Date</th><th>Ticket ID</th><th>Category</th><th>Engineer</th><th>Team</th><th>WiFi</th><th>Remarks</th></tr></thead>
           <tbody id="wf-tbody"></tbody>
         </table></div>
       </div>
     </div>
 
+    <!-- USER MANAGEMENT (Admin only) -->
     <div class="page" id="page-users">
       <div class="page-header"><div class="page-ttl">👥 User Management</div></div>
       <div class="tbl-card">
-        <div class="tbl-top"><span class="tbl-title">Engineer List</span><span class="tbl-badge">6 users</span></div>
+        <div class="tbl-top"><span class="tbl-title">All Users</span><span class="tbl-badge" id="usr-cnt">9 users</span></div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>#</th><th>Name</th><th>Role</th><th>Team</th><th>Zone</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>Md. Emon</td><td>Engineer</td><td>CEx Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-            <tr><td>2</td><td>Md. Rahim</td><td>Engineer</td><td>Field Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-            <tr><td>3</td><td>Md. Karim</td><td>Engineer</td><td>NCSS Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-            <tr><td>4</td><td>Md. Sumon</td><td>Engineer</td><td>Field Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-            <tr><td>5</td><td>Md. Rafi</td><td>Engineer</td><td>Joint Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-            <tr><td>6</td><td>Md. Arif</td><td>Engineer</td><td>CEx Team</td><td>Motijheel</td><td><span class="chip chip-yes">Active</span></td></tr>
-          </tbody>
+          <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Role</th><th>Status</th></tr></thead>
+          <tbody id="usr-tbody"></tbody>
         </table></div>
       </div>
     </div>
@@ -384,11 +562,140 @@ tbody tr:hover td{background:#f5f9ff}
   </div>
 </div>
 </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-let tickets=[];
-const titles={dashboard:'DAILY WORK DASHBOARD',mytask:'MY TASK',taskreport:'TASK REPORT',alltask:'ALL COMPLETED TASKS',devices:'USED DEVICES',wifi:'WIFI SCORING',users:'USER MANAGEMENT'};
+// ===== USER DATABASE (passwords stored in localStorage) =====
+const DEFAULT_USERS = {
+  admin:       { name:'Admin',       role:'admin',    pass:'admin123' },
+  ahsan:       { name:'Ahsan',       role:'engineer', pass:'ahsan123' },
+  rupchan:     { name:'Rupchan',     role:'engineer', pass:'rupchan123' },
+  tamim:       { name:'Tamim',       role:'engineer', pass:'tamim123' },
+  amit:        { name:'Amit',        role:'engineer', pass:'amit123' },
+  arifuzzaman: { name:'Arifuzzaman', role:'engineer', pass:'arif123' },
+  maruf:       { name:'Maruf',       role:'engineer', pass:'maruf123' },
+  sayed:       { name:'Sayed',       role:'engineer', pass:'sayed123' },
+  nazrul:      { name:'Nazrul',      role:'engineer', pass:'nazrul123' }
+};
+
+function getUsers() {
+  const stored = localStorage.getItem('l3_users');
+  if (!stored) { localStorage.setItem('l3_users', JSON.stringify(DEFAULT_USERS)); return DEFAULT_USERS; }
+  return JSON.parse(stored);
+}
+function saveUsers(u) { localStorage.setItem('l3_users', JSON.stringify(u)); }
+
+let currentUser = null;
+
+function doLogin() {
+  const uname = document.getElementById('l-user').value.trim().toLowerCase();
+  const pass   = document.getElementById('l-pass').value;
+  const users  = getUsers();
+  const err    = document.getElementById('login-err');
+
+  if (users[uname] && users[uname].pass === pass) {
+    err.classList.remove('show');
+    currentUser = { username: uname, ...users[uname] };
+    sessionStorage.setItem('l3_session', JSON.stringify(currentUser));
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    setupUserUI();
+    renderUserTable();
+  } else {
+    err.classList.add('show');
+    document.getElementById('l-pass').value = '';
+  }
+}
+
+function setupUserUI() {
+  const u = currentUser;
+  // Sidebar info
+  document.getElementById('sb-uname').textContent = u.name;
+  document.getElementById('sb-urole').textContent  = u.role === 'admin' ? 'ADMINISTRATOR' : 'ENGINEER';
+  document.getElementById('sb-avatar').textContent = u.name.substring(0,2).toUpperCase();
+
+  // Admin-only menu items
+  const adminItems = document.querySelectorAll('.admin-only');
+  adminItems.forEach(el => el.style.display = u.role === 'admin' ? 'flex' : 'none');
+
+  // Pre-fill engineer name in form if engineer role
+  if (u.role === 'engineer') {
+    const sel = document.getElementById('f-eng');
+    for (let opt of sel.options) {
+      if (opt.value === u.name || opt.text === u.name) { sel.value = opt.value; sel.disabled = true; break; }
+    }
+  } else {
+    document.getElementById('f-eng').disabled = false;
+  }
+}
+
+function doLogout() {
+  currentUser = null;
+  sessionStorage.removeItem('l3_session');
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  document.getElementById('login-err').classList.remove('show');
+}
+
+// ===== CHANGE PASSWORD =====
+function openChpw() {
+  document.getElementById('cp-old').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  document.getElementById('cp-err').classList.remove('show');
+  document.getElementById('chpw-modal').classList.add('show');
+}
+function closeChpw() { document.getElementById('chpw-modal').classList.remove('show'); }
+
+function savePassword() {
+  const oldP    = document.getElementById('cp-old').value;
+  const newP    = document.getElementById('cp-new').value;
+  const confirm = document.getElementById('cp-confirm').value;
+  const errEl   = document.getElementById('cp-err');
+
+  if (oldP !== currentUser.pass) {
+    errEl.textContent = '❌ Current password ভুল!'; errEl.classList.add('show'); return;
+  }
+  if (newP.length < 4) {
+    errEl.textContent = '❌ Password কমপক্ষে 4 character হতে হবে!'; errEl.classList.add('show'); return;
+  }
+  if (newP !== confirm) {
+    errEl.textContent = '❌ নতুন password দুটো মিলছে না!'; errEl.classList.add('show'); return;
+  }
+
+  const users = getUsers();
+  users[currentUser.username].pass = newP;
+  saveUsers(users);
+  currentUser.pass = newP;
+  closeChpw();
+  toast('✅ Password সফলভাবে পরিবর্তন হয়েছে!');
+}
+
+// ===== USER TABLE (Admin) =====
+function renderUserTable() {
+  if (!currentUser || currentUser.role !== 'admin') return;
+  const users = getUsers();
+  const tb = document.getElementById('usr-tbody');
+  tb.innerHTML = Object.entries(users).map(([uname, u], i) => `
+    <tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td style="font-weight:600">${u.name}</td>
+      <td style="font-family:monospace;color:var(--blue)">${uname}</td>
+      <td><span class="chip ${u.role==='admin'?'chip-admin':'chip-eng'}">${u.role==='admin'?'Admin':'Engineer'}</span></td>
+      <td><span class="chip chip-yes">Active</span></td>
+    </tr>`).join('');
+  document.getElementById('usr-cnt').textContent = Object.keys(users).length + ' users';
+}
+
+// ===== TICKETS & FIREBASE =====
+let tickets = [];
+
+const titles = {dashboard:'DAILY WORK DASHBOARD',mytask:'MY TASK',taskreport:'TASK REPORT',
+  alltask:'ALL COMPLETED TASKS',devices:'USED DEVICES',wifi:'WIFI SCORING',users:'USER MANAGEMENT'};
 
 function pad(n){return String(n).padStart(2,'0')}
 function updateClock(){
@@ -400,12 +707,11 @@ function updateClock(){
   h=h%12||12;
   document.getElementById('ttime').textContent=pad(h)+':'+pad(m)+':'+pad(s)+' '+ap;
 }
-updateClock();setInterval(updateClock,1000);
+updateClock(); setInterval(updateClock,1000);
 
 const today=new Date().toISOString().split('T')[0];
-document.getElementById('f-date').value=today;
-document.getElementById('mt-date').value=today;
-
+function setDateDefaults(){ document.getElementById('f-date').value=today; document.getElementById('mt-date').value=today; }
+setDateDefaults();
 function setToday(id){document.getElementById(id).value=today;}
 
 function showPage(pg,el){
@@ -419,13 +725,84 @@ function showPage(pg,el){
   if(pg==='alltask')renderAll();
   if(pg==='devices')renderDevices();
   if(pg==='wifi')renderWifi();
+  if(pg==='users')renderUserTable();
 }
 
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
+  t.textContent=msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
 }
+
+// ===== SINGLE TOGGLE BUTTON =====
+function toggleSingle(field){
+  const hidden = document.getElementById('f-'+field);
+  const btn    = document.getElementById('btn-'+field);
+  const valEl  = document.getElementById('ts-'+field+'-val');
+  const isYes  = hidden.value === 'YES';
+  if(isYes){
+    hidden.value = 'NO';
+    valEl.textContent = 'NO';
+    btn.classList.remove('is-yes');
+    btn.classList.add('is-no');
+  } else {
+    hidden.value = 'YES';
+    valEl.textContent = 'YES';
+    btn.classList.remove('is-no');
+    btn.classList.add('is-yes');
+  }
+}
+function setToggle(field, val){
+  const hidden = document.getElementById('f-'+field);
+  const btn    = document.getElementById('btn-'+field);
+  const valEl  = document.getElementById('ts-'+field+'-val');
+  hidden.value = val;
+  valEl.textContent = val;
+  btn.classList.toggle('is-yes', val==='YES');
+  btn.classList.toggle('is-no',  val==='NO');
+}
+
+// ===== CUSTOM CHECKBOX DROPDOWN =====
+function toggleCdd(key){
+  const list=document.getElementById('cdd-'+key+'-list');
+  const btn=document.getElementById('cdd-'+key+'-btn');
+  const open=list.style.display==='none';
+  // close all
+  ['cat','tt','tm'].forEach(k=>{
+    document.getElementById('cdd-'+k+'-list').style.display='none';
+    document.getElementById('cdd-'+k+'-btn').classList.remove('open');
+  });
+  if(open){list.style.display='block';btn.classList.add('open');}
+}
+function pickCdd(key,cb){
+  // Only one selection at a time (radio-like)
+  const all=document.querySelectorAll('input[name="f-'+({'cat':'cat','tt':'tasktype','tm':'team'}[key])+'"]');
+  all.forEach(c=>{if(c!==cb)c.checked=false;});
+  const val=cb.checked?cb.value:'';
+  document.getElementById('f-'+({'cat':'cat','tt':'tasktype','tm':'team'}[key])).value=val;
+  document.getElementById('cdd-'+key+'-label').textContent=val||(key==='cat'?'Select Category':key==='tt'?'Select Task Type':'Select Team Type');
+  document.getElementById('cdd-'+key+'-label').style.color=val?'var(--text)':'';
+  // close list
+  document.getElementById('cdd-'+key+'-list').style.display='none';
+  document.getElementById('cdd-'+key+'-btn').classList.remove('open');
+}
+function resetCdd(key,placeholder){
+  const nameMap={'cat':'cat','tt':'tasktype','tm':'team'};
+  document.querySelectorAll('input[name="f-'+nameMap[key]+'"]').forEach(c=>c.checked=false);
+  document.getElementById('f-'+nameMap[key]).value='';
+  document.getElementById('cdd-'+key+'-label').textContent=placeholder;
+  document.getElementById('cdd-'+key+'-label').style.color='';
+}
+// close dropdowns when clicking outside
+document.addEventListener('click',function(e){
+  ['cat','tt','tm'].forEach(k=>{
+    const wrap=document.getElementById('cdd-'+k+'-wrap');
+    if(wrap&&!wrap.contains(e.target)){
+      document.getElementById('cdd-'+k+'-list').style.display='none';
+      document.getElementById('cdd-'+k+'-btn').classList.remove('open');
+    }
+  });
+});
 
 async function submitTicket(){
   const d=document.getElementById('f-date').value;
@@ -439,16 +816,21 @@ async function submitTicket(){
     bnoc:document.getElementById('f-bnoc').value,
     mac:document.getElementById('f-mac').value.trim(),
     wifi:document.getElementById('f-wifi').value,
-    remarks:document.getElementById('f-remarks').value.trim()};
+    remarks:document.getElementById('f-remarks').value.trim(),
+    submittedBy: currentUser ? currentUser.username : 'unknown'
+  };
   const btn=document.querySelector('.btn-submit');
-  btn.disabled=true;btn.textContent='⏳ Saving...';
+  btn.disabled=true; btn.textContent='⏳ Saving...';
   const ok=await window._fbPush(ticketData);
-  btn.disabled=false;btn.innerHTML='✈ SUBMIT DONE TICKETS';
+  btn.disabled=false; btn.innerHTML='✈ SUBMIT DONE TICKETS';
   if(ok){
     ['f-ticket','f-mac','f-remarks'].forEach(i=>document.getElementById(i).value='');
-    ['f-cat','f-tasktype','f-team','f-eng'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('f-bnoc').value='NO';
-    document.getElementById('f-wifi').value='NO';
+    resetCdd('cat','Select Category');
+    resetCdd('tt','Select Task Type');
+    resetCdd('tm','Select Team Type');
+    if(currentUser.role!=='engineer') document.getElementById('f-eng').value='';
+    setToggle('bnoc','NO');
+    setToggle('wifi','NO');
     toast('✅ Ticket সফলভাবে Firebase-এ সেভ হয়েছে!');
   } else {
     toast('❌ Firebase save failed! Connection check করুন।');
@@ -479,36 +861,44 @@ function filterByCat(el,cat,statsId){
 
 function buildRows(arr,tbodyId,withDel){
   const tb=document.getElementById(tbodyId);
-  if(!arr.length){tb.innerHTML=`<tr><td colspan="12"><div class="empty-box"><div class="ei">📂</div><p>No tasks for selected date.</p></div></td></tr>`;return;}
+  if(!arr.length){tb.innerHTML=`<tr><td colspan="12"><div class="empty-box"><div class="ei">📂</div><p>No tasks found.</p></div></td></tr>`;return;}
   tb.innerHTML=arr.map((t,i)=>`<tr>
     <td style="color:var(--muted)">${i+1}</td>
     <td style="white-space:nowrap">${t.date}</td>
-    <td style="max-width:150px;word-break:break-all;font-size:11.5px">${t.ticket}</td>
+    <td style="max-width:150px;word-break:break-all">${t.ticket}</td>
     <td><span class="chip chip-cat">${t.cat}</span></td>
-    <td style="font-size:12px">${t.tt}</td>
-    <td style="font-size:12px">${t.tm}</td>
+    <td>${t.tt}</td><td>${t.tm}</td>
     <td style="font-weight:500">${t.eng}</td>
     <td><span class="chip ${t.bnoc==='YES'?'chip-yes':'chip-no'}">${t.bnoc}</span></td>
-    <td style="font-size:11px;color:var(--muted)">${t.mac||'—'}</td>
+    <td style="font-family:monospace;font-size:11px;color:var(--muted)">${t.mac||'—'}</td>
     <td><span class="chip ${t.wifi==='YES'?'chip-yes':'chip-no'}">${t.wifi}</span></td>
-    <td style="font-size:11.5px;max-width:120px">${t.remarks||'—'}</td>
-    ${withDel?`<td><button class="btn-row-del" onclick="delTicket('${t.firebaseKey||t.id}')">✕</button></td>`:'<td></td>'}
+    <td style="max-width:120px">${t.remarks||'—'}</td>
+    ${withDel && currentUser && currentUser.role==='admin' ?
+      `<td><button class="btn-row-del" onclick="delTicket('${t.firebaseKey||t.id}')">✕</button></td>` :
+      '<td></td>'}
   </tr>`).join('');
 }
 
-async function delTicket(firebaseKey){
+async function delTicket(fk){
   if(!confirm('এই টিকেট মুছবেন?'))return;
-  const ok=await window._fbDelete(firebaseKey);
-  if(ok){toast('🗑 Ticket Firebase থেকে মুছে ফেলা হয়েছে');}
-  else{toast('❌ Delete failed!');}
+  const ok=await window._fbDelete(fk);
+  if(ok) toast('🗑 Ticket মুছে ফেলা হয়েছে');
+  else toast('❌ Delete failed!');
+}
+
+function getMyTickets(){
+  if(!currentUser) return [];
+  if(currentUser.role==='admin') return tickets;
+  return tickets.filter(t=>t.eng===currentUser.name || t.submittedBy===currentUser.username);
 }
 
 function renderMyTask(){
   const df=document.getElementById('mt-date').value;
   const s=document.getElementById('mt-search').value.toLowerCase();
   const cat=activeCat['mt-stats']||'';
-  let arr=tickets.filter(t=>(!df||t.date===df)&&(!s||(t.ticket.toLowerCase().includes(s)||t.eng.toLowerCase().includes(s)))&&(!cat||t.cat===cat));
-  buildStats(tickets,'Installation,Troubleshoot,CR,Survey'.split(','),'mt-stats');
+  const base=getMyTickets();
+  let arr=base.filter(t=>(!df||t.date===df)&&(!s||(t.ticket.toLowerCase().includes(s)||t.eng.toLowerCase().includes(s)))&&(!cat||t.cat===cat));
+  buildStats(base,'Installation,Troubleshoot,CR,Survey'.split(','),'mt-stats');
   document.getElementById('mt-cnt').textContent=arr.length+' tickets';
   buildRows(arr,'mt-tbody',true);
 }
@@ -518,22 +908,23 @@ function renderReport(){
   const dt=document.getElementById('tr-dt').value;
   const cat=document.getElementById('tr-cat').value||(activeCat['tr-stats']||'');
   const s=document.getElementById('tr-search').value.toLowerCase();
-  let arr=tickets.filter(t=>(!df||t.date>=df)&&(!dt||t.date<=dt)&&(!cat||t.cat===cat)&&
+  const base=getMyTickets();
+  let arr=base.filter(t=>(!df||t.date>=df)&&(!dt||t.date<=dt)&&(!cat||t.cat===cat)&&
     (!s||(t.ticket.toLowerCase().includes(s)||t.eng.toLowerCase().includes(s))));
-  buildStats(tickets,'Installation,Troubleshoot,CR,Survey'.split(','),'tr-stats');
+  buildStats(base,'Installation,Troubleshoot,CR,Survey'.split(','),'tr-stats');
   document.getElementById('tr-cnt').textContent=arr.length+' records';
   const tb=document.getElementById('tr-tbody');
   if(!arr.length){tb.innerHTML=`<tr><td colspan="11"><div class="empty-box"><div class="ei">📂</div><p>No tasks found.</p></div></td></tr>`;return;}
   tb.innerHTML=arr.map((t,i)=>`<tr>
     <td style="color:var(--muted)">${i+1}</td><td>${t.date}</td>
-    <td style="font-size:11.5px;max-width:150px;word-break:break-all">${t.ticket}</td>
+    <td style="max-width:150px;word-break:break-all">${t.ticket}</td>
     <td><span class="chip chip-cat">${t.cat}</span></td>
-    <td style="font-size:12px">${t.tt}</td><td style="font-size:12px">${t.tm}</td>
+    <td>${t.tt}</td><td>${t.tm}</td>
     <td style="font-weight:500">${t.eng}</td>
     <td><span class="chip ${t.bnoc==='YES'?'chip-yes':'chip-no'}">${t.bnoc}</span></td>
-    <td style="font-size:11px;color:var(--muted)">${t.mac||'—'}</td>
+    <td style="font-family:monospace;font-size:11px;color:var(--muted)">${t.mac||'—'}</td>
     <td><span class="chip ${t.wifi==='YES'?'chip-yes':'chip-no'}">${t.wifi}</span></td>
-    <td style="font-size:11.5px">${t.remarks||'—'}</td>
+    <td>${t.remarks||'—'}</td>
   </tr>`).join('');
 }
 
@@ -557,10 +948,9 @@ function renderDevices(){
   if(!arr.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty-box"><div class="ei">📡</div><p>No devices found.</p></div></td></tr>`;return;}
   tb.innerHTML=arr.map((t,i)=>`<tr>
     <td style="color:var(--muted)">${i+1}</td><td>${t.date}</td>
-    <td style="font-size:11.5px">${t.ticket}</td>
-    <td style="font-family:monospace;font-size:12px;color:var(--blue)">${t.mac}</td>
-    <td>${t.eng}</td><td>${t.tm}</td>
-    <td style="font-size:11.5px">${t.remarks||'—'}</td>
+    <td>${t.ticket}</td>
+    <td style="font-family:monospace;color:var(--blue)">${t.mac}</td>
+    <td>${t.eng}</td><td>${t.tm}</td><td>${t.remarks||'—'}</td>
   </tr>`).join('');
 }
 
@@ -569,14 +959,12 @@ function renderWifi(){
   let arr=tickets.filter(t=>t.wifi==='YES'&&(!s||(t.ticket.toLowerCase().includes(s)||t.eng.toLowerCase().includes(s))));
   document.getElementById('wf-cnt').textContent=arr.length+' records';
   const tb=document.getElementById('wf-tbody');
-  if(!arr.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty-box"><div class="ei">📶</div><p>No WiFi scored tickets found.</p></div></td></tr>`;return;}
+  if(!arr.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty-box"><div class="ei">📶</div><p>No WiFi scored tickets.</p></div></td></tr>`;return;}
   tb.innerHTML=arr.map((t,i)=>`<tr>
     <td style="color:var(--muted)">${i+1}</td><td>${t.date}</td>
-    <td style="font-size:11.5px">${t.ticket}</td>
-    <td><span class="chip chip-cat">${t.cat}</span></td>
+    <td>${t.ticket}</td><td><span class="chip chip-cat">${t.cat}</span></td>
     <td>${t.eng}</td><td>${t.tm}</td>
-    <td><span class="chip chip-yes">YES</span></td>
-    <td style="font-size:11.5px">${t.remarks||'—'}</td>
+    <td><span class="chip chip-yes">YES</span></td><td>${t.remarks||'—'}</td>
   </tr>`).join('');
 }
 
@@ -593,6 +981,32 @@ function clearMyFilters(){
   activeCat['mt-stats']='';
   renderMyTask();
 }
+
+// Enter key on login username field
+document.getElementById('l-user').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('l-pass').focus(); });
+
+// ===== AUTO-RESTORE SESSION ON REFRESH =====
+(function restoreSession() {
+  const saved = sessionStorage.getItem('l3_session');
+  if (!saved) return;
+  try {
+    const user = JSON.parse(saved);
+    // Verify user still exists and password hasn't changed
+    const users = getUsers();
+    const dbUser = users[user.username];
+    if (!dbUser || dbUser.pass !== user.pass) {
+      sessionStorage.removeItem('l3_session');
+      return;
+    }
+    currentUser = user;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    setupUserUI();
+    renderUserTable();
+  } catch(e) {
+    sessionStorage.removeItem('l3_session');
+  }
+})();
 </script>
 </body>
 </html>
