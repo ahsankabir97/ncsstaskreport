@@ -252,8 +252,8 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLrnx5cLKn1jP1W4sEK
 .sb-link i{font-size:.75rem;min-width:20px;text-align:center}
 .sb-link.logout:hover{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4)}
 .sb-link.logout:hover,.sb-link.logout:hover i{color:#fca5a5}
-.sb-prepared{text-align:center;margin-top:6px;font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:1px;line-height:1.5;font-family:'Outfit',sans-serif}
-.sb-prepared b{font-size:.68rem;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;background:linear-gradient(90deg,rgba(255,255,255,.4) 0%,#64b5f6 40%,#fff 60%,rgba(255,255,255,.4) 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 3s linear infinite;}
+.sb-prepared{text-align:center;margin-top:6px;font-size:.5rem;color:rgba(255,255,255,.85);letter-spacing:1px;line-height:1.5;font-family:'Outfit',sans-serif}
+.sb-prepared b{font-size:.68rem;letter-spacing:1.5px;font-family:'Montserrat',sans-serif;background:linear-gradient(90deg,#0d1f5c 0%,#0d1f5c 20%,#ffffff 45%,#ffffff 55%,#0d1f5c 80%,#0d1f5c 100%);background-size:250% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:nameShimmer 4s linear infinite;}
 
 @keyframes nameShimmer{
   0%{background-position:200% center}
@@ -270,6 +270,18 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLrnx5cLKn1jP1W4sEK
 .top-right{display:flex;align-items:center;gap:14px;margin-left:auto;position:relative;z-index:1}
 .fb-status{display:flex;align-items:center;gap:6px;padding:3px 12px;border-radius:20px;font-size:.6rem;font-weight:800;font-family:'Montserrat',sans-serif;letter-spacing:.8px;text-transform:uppercase}
 .fb-status.connected{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(22,163,74,.4)}
+@keyframes liveShimmer {
+  0%   { background-position: 200% center }
+  100% { background-position: -200% center }
+}
+.fb-status.connected span {
+  background: linear-gradient(90deg, #4ade80 0%, #86efac 40%, #fff 60%, #4ade80 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: liveShimmer 2.5s linear infinite;
+}
 .fb-status.disconnected{background:rgba(220,38,38,.15);color:#fca5a5;border:1px solid rgba(220,38,38,.3)}
 .fb-dot{width:7px;height:7px;border-radius:50%}
 .fb-status.connected .fb-dot{background:#22c55e;animation:pulse 1.5s infinite}
@@ -754,8 +766,8 @@ tbody tr:hover td{background:#f0f8ff}
                 <span class="cdd-arrow" id="cdd-cat-arrow">▼</span>
               </div>
               <div class="cdd-list" id="cdd-cat-list" style="display:none">
-                <label class="cdd-item"><input type="checkbox" name="f-cat" value="Installation" onchange="pickCdd('cat',this)"><span>Installation</span></label>
                 <label class="cdd-item"><input type="checkbox" name="f-cat" value="Troubleshoot" onchange="pickCdd('cat',this)"><span>Troubleshoot</span></label>
+<label class="cdd-item"><input type="checkbox" name="f-cat" value="Installation" onchange="pickCdd('cat',this)"><span>Installation</span></label>
                 <label class="cdd-item"><input type="checkbox" name="f-cat" value="Survey" onchange="pickCdd('cat',this)"><span>Survey</span></label>
                 <label class="cdd-item"><input type="checkbox" name="f-cat" value="CR" onchange="pickCdd('cat',this)"><span>CR</span></label>
                 <label class="cdd-item"><input type="checkbox" name="f-cat" value="Non Ticket" onchange="pickCdd('cat',this)"><span>Non Ticket</span></label>
@@ -1641,8 +1653,7 @@ function setDateDefaults(){
 // Script এর একদম শেষে যোগ করুন
 const _initMi = new Date().getMonth();
 document.getElementById('tr-month-sel').value = String(_initMi);
-const _lm = new Date().getMonth()===0 ? 12 : new Date().getMonth();
-document.getElementById('db-month').value = String(_lm).padStart(2,'0');
+document.getElementById('db-month').value = String(new Date().getMonth() + 1).padStart(2, '0');
 }
 
 function showPage(pg,el){
@@ -1672,8 +1683,7 @@ function showPage(pg,el){
   if(pg==='wifi')renderWifi();
   if(pg==='users')renderUserTable();
   if(pg==='maindash'){
-  const _lm = new Date().getMonth()===0 ? 12 : new Date().getMonth();
-  document.getElementById('db-month').value = String(_lm).padStart(2,'0');
+  document.getElementById('db-month').value = String(new Date().getMonth() + 1).padStart(2, '0');
   renderDash();
 }
 }
@@ -2433,7 +2443,7 @@ function wfGoPage(p){
 function updateFirebaseStatus(connected){
   const el=document.getElementById('fb-status');
   const txt=document.getElementById('fb-status-txt');
-  if(connected){el.className='fb-status connected';txt.textContent='Firebase Live';}
+  if(connected){el.className='fb-status connected';txt.textContent='LIVE';}
   else{el.className='fb-status disconnected';txt.textContent='Disconnected';}
 }
 
