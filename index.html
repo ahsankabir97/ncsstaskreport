@@ -490,15 +490,15 @@ tbody tr:hover td{background:#f0f8ff}
   transform:translateX(-50%) translateY(0) scale(1);
 }
 .inv-float-circle{
-  width:28px;height:28px;border-radius:8px;
+  width:24px;height:24px;border-radius:10px;
   display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:.68rem;text-decoration:none;
-  box-shadow:0 0 0 2px rgba(255,255,255,.45), 0 4px 12px rgba(0,0,0,.4);
+  color:#fff;font-size:.62rem;text-decoration:none;
+  box-shadow:0 0 0 2.5px rgba(255,255,255,.45), 0 5px 16px rgba(0,0,0,.4);
   transition:all .25s;
 }
 .inv-float-circle:hover{
   transform:scale(1.1);
-  box-shadow:0 0 0 3px rgba(255,255,255,.7), 0 6px 16px rgba(0,0,0,.45);
+  box-shadow:0 0 0 3.5px rgba(255,255,255,.7), 0 8px 20px rgba(0,0,0,.45);
 }
 .inv-float-blue{background:linear-gradient(145deg,#1a3a8f,#2196f3);}
 .inv-float-green{background:linear-gradient(145deg,#047857,#34d399);}
@@ -617,7 +617,7 @@ tbody tr:hover td{background:#f0f8ff}
     <a href="https://ahsankabir97.github.io/TechniciansTask/" target="_blank" class="inv-float-circle inv-float-green" title="Technician Dashboard">
       <i class="fas fa-hard-hat"></i>
     </a>
-    <a href="https://ahsankabir97.github.io/ClientDatabase/" target="_blank" class="inv-float-circle" style="background:linear-gradient(145deg,#7c3aed,#a855f7)" title="Client Connection Management">
+<a href="https://ahsankabir97.github.io/ClientDatabase/" target="_blank" class="inv-float-circle" style="background:linear-gradient(145deg,#7c3aed,#a855f7)" title="Client Connection Management">
       <i class="fas fa-database"></i>
     </a>
   </div>
@@ -1868,7 +1868,76 @@ function filterByCat(el,cat,statsId){
   if(statsId==='mt-stats')renderMyTask();
   if(statsId==='at-stats')renderAll();
 }
+function renderBnocCell(t) {
+  const key = t.firebaseKey || t.id;
+  const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.username === 'ahsan');
+  if (!canEdit) {
+    return t.bnoc === 'YES'
+      ? `<span class="chip chip-yes" style="font-size:.6rem">Ahsanul Kabir</span>`
+      : `<span class="chip chip-no">NO</span>`;
+  }
+  return `
+    <div style="position:relative;display:inline-block">
+      <button onclick="openBnocEdit('${key}')" style="background:${t.bnoc==='YES'?'linear-gradient(135deg,#d1fae5,#a7f3d0)':'#f1f5f9'};border:1.5px solid ${t.bnoc==='YES'?'#6ee7b7':'#e2e8f0'};border-radius:20px;padding:2px 10px;font-size:.65rem;font-weight:700;font-family:'Montserrat',sans-serif;color:${t.bnoc==='YES'?'#065f46':'#5b7fa6'};cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s" title="Click to edit BNOC">
+        ${t.bnoc === 'YES' ? 'Ahsanul Kabir' : 'NO'}
+        <i class="fas fa-pencil-alt" style="font-size:.5rem;opacity:.7"></i>
+      </button>
+    </div>`;
+}
 
+async function openBnocEdit(firebaseKey) {
+  const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.username === 'ahsan');
+  if (!canEdit) return;
+
+  const ticket = tickets.find(t => (t.firebaseKey || t.id) == firebaseKey);
+  if (!ticket) return;
+
+  const currentVal = ticket.bnoc || 'NO';
+  const newVal = currentVal === 'YES' ? 'NO' : 'YES';
+
+  if (!confirm(`BNOC change করবেন?\n\nTicket: ${ticket.ticket}\nCurrent: ${currentVal} → New: ${newVal}`)) return;
+
+  try {
+    const { getDatabase, ref, update } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+    const db = getDatabase();
+    await update(ref(db, 'tickets/' + ticket.firebaseKey), { bnoc: newVal });
+    toast(`✅ BNOC updated: ${ticket.ticket} → ${newVal}`);
+  } catch(e) {
+    console.error(e);
+    toast('❌ BNOC update failed!');
+  }
+}
+function renderRemarksCell(t) {
+  const key = t.firebaseKey || t.id;
+  const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.username === 'ahsan');
+  const val = t.remarks || '—';
+  if (!canEdit) return `<span style="max-width:150px;white-space:normal;display:inline-block">${val}</span>`;
+  return `
+    <div style="display:inline-flex;align-items:center;gap:5px;max-width:180px">
+      <span style="white-space:normal;word-break:break-word;font-size:.78rem">${val}</span>
+      <button onclick="openRemarksEdit('${key}')" style="background:none;border:1px solid #bee3f8;border-radius:6px;padding:2px 6px;cursor:pointer;color:#1a3a8f;flex-shrink:0;transition:all .2s" title="Edit Remarks" onmouseover="this.style.background='#e8f4fd'" onmouseout="this.style.background='none'">
+        <i class="fas fa-pencil-alt" style="font-size:.55rem"></i>
+      </button>
+    </div>`;
+}
+
+async function openRemarksEdit(firebaseKey) {
+  const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.username === 'ahsan');
+  if (!canEdit) return;
+  const ticket = tickets.find(t => (t.firebaseKey || t.id) == firebaseKey);
+  if (!ticket) return;
+  const newVal = prompt(`Remarks edit করুন:\n\nTicket: ${ticket.ticket}`, ticket.remarks || '');
+  if (newVal === null) return;
+  try {
+    const { getDatabase, ref, update } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js");
+    const db = getDatabase();
+    await update(ref(db, 'tickets/' + ticket.firebaseKey), { remarks: newVal.trim() });
+    toast(`✅ Remarks updated: ${ticket.ticket}`);
+  } catch(e) {
+    console.error(e);
+    toast('❌ Remarks update failed!');
+  }
+}
 function buildRows(arr,tbodyId,withDel,isMyTask,startIdx=0){
   const tb=document.getElementById(tbodyId);
   const isAt = tbodyId === 'at-tbody';
@@ -1894,9 +1963,8 @@ function buildRows(arr,tbodyId,withDel,isMyTask,startIdx=0){
     <td>${t.tt}</td>
     <td>${t.tm}</td>
     <td style="color:var(--blue);font-weight:700">${t.eng}</td>
-    <td>${t.bnoc==='YES'
-      ? `<span class="chip chip-yes" style="font-size:.6rem">Ahsanul Kabir</span>`
-      : `<span class="chip chip-no">NO</span>`}
+    <td id="bnoc-cell-${t.firebaseKey||t.id}">
+      ${renderBnocCell(t)}
     </td>
     <td style="font-family:'JetBrains Mono',monospace;padding:5px 4px">${t.mac||'—'}</td>
     <td><span class="chip ${t.wifi==='YES'?'chip-yes':'chip-no'}">${t.wifi}</span></td>
@@ -2328,7 +2396,7 @@ if(dvTotal) dvTotal.textContent=arr.length;
     <td style="font-family:'JetBrains Mono',monospace">${t.mac}</td>
     <td>${t.eng}</td>
     <td>${t.tm}</td>
-    <td>${t.remarks||'—'}</td>
+    <td>${renderRemarksCell(t)}</td>
   </tr>`).join('');
   renderDvPagination(arr.length,totalPages);
 }
